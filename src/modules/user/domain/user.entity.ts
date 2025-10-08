@@ -54,6 +54,14 @@ export class User extends BaseEntity {
     @ApiProperty({ description: 'Last login timestamp', example: '2024-01-15T10:30:00Z', required: false })
     lastLoginAt?: Date;
 
+    @Column({ name: 'HIS_USERNAME', type: 'varchar2', length: 50, nullable: true })
+    @ApiProperty({ description: 'HIS username for integration', example: 'vht2', required: false })
+    hisUsername?: string;
+
+    @Column({ name: 'HIS_PASSWORD', type: 'varchar2', length: 100, nullable: true })
+    @ApiProperty({ description: 'HIS password for integration', example: 't123456', required: false })
+    hisPassword?: string;
+
 
     // Business methods
     getFullName(): string {
@@ -70,5 +78,19 @@ export class User extends BaseEntity {
 
     updateLastLogin(): void {
         this.lastLoginAt = new Date();
+    }
+
+    hasHisCredentials(): boolean {
+        return !!(this.hisUsername && this.hisPassword);
+    }
+
+    getHisCredentials(): { username: string; password: string } | null {
+        if (this.hasHisCredentials()) {
+            return {
+                username: this.hisUsername!,
+                password: this.hisPassword!
+            };
+        }
+        return null;
     }
 }
