@@ -13,6 +13,7 @@ import { BranchModule } from './modules/branch/branch.module';
 import { DepartmentTypeModule } from './modules/department-type/department-type.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { RoomModule } from './modules/room/room.module';
+import { SampleTypeModule } from './modules/sample-type/sample-type.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -50,6 +51,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         DepartmentTypeModule,
         DepartmentModule,
         RoomModule,
+        SampleTypeModule,
     ],
     controllers: [HealthController],
     providers: [
