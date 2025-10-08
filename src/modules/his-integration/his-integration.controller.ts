@@ -6,6 +6,7 @@ import {
     Param,
     UseGuards,
     HttpStatus,
+    HttpException,
     Query,
     Request,
 } from '@nestjs/common';
@@ -30,18 +31,20 @@ export class HisIntegrationController {
     ) { }
 
     @Post('login')
-    @Roles('admin', 'manager')
-    @ApiOperation({ summary: 'Login to HIS system and get token (uses current user HIS credentials if not provided)' })
+    @Roles('admin', 'manager', 'user')
+    @ApiOperation({ summary: 'Login to HIS system using current user credentials from JWT token' })
     @ApiResponse({ status: 201, description: 'Successfully logged in to HIS' })
     @ApiResponse({ status: 401, description: 'HIS login failed' })
     @ApiResponse({ status: 400, description: 'HIS credentials not configured for current user' })
-    async loginToHIS(@Body() hisLoginDto: HisLoginDto, @Request() req: any) {
+    async loginToHIS(@Request() req: any) {
         const currentUserId = req.user?.sub; // Get current user ID from JWT token
-        const token = await this.hisIntegrationService.loginToHIS(
-            hisLoginDto.username,
-            hisLoginDto.password,
-            currentUserId
-        );
+        const currentUsername = req.user?.username; // Get current username from JWT token
+        
+        if (!currentUserId) {
+            throw new HttpException('User ID not found in JWT token', HttpStatus.UNAUTHORIZED);
+        }
+
+        const token = await this.hisIntegrationService.loginToHISWithCurrentUser(currentUserId, currentUsername);
         return ResponseBuilder.success(token, HttpStatus.CREATED);
     }
 
@@ -57,11 +60,24 @@ export class HisIntegrationController {
 
     @Get('token')
     @Roles('admin', 'manager', 'user')
-    @ApiOperation({ summary: 'Get valid HIS token' })
+    @ApiOperation({ summary: 'Get valid HIS token for current user' })
     @ApiResponse({ status: 200, description: 'Token retrieved successfully' })
     @ApiResponse({ status: 401, description: 'No valid token found' })
-    async getValidToken(@Query('username') username?: string) {
-        const token = await this.hisIntegrationService.getValidToken(username);
+    async getValidToken(@Request() req: any, @Query('username') username?: string) {
+        // If username not provided, get from current user's HIS credentials
+        let targetUsername = username;
+        
+        if (!targetUsername) {
+            const currentUserId = req.user?.sub;
+            if (!currentUserId) {
+                throw new HttpException('User ID not found in JWT token', HttpStatus.UNAUTHORIZED);
+            }
+            
+            const currentUser = await this.hisIntegrationService.getCurrentUserHISUsername(currentUserId);
+            targetUsername = currentUser;
+        }
+        
+        const token = await this.hisIntegrationService.getValidToken(targetUsername);
         return ResponseBuilder.success(token);
     }
 
@@ -77,15 +93,28 @@ export class HisIntegrationController {
 
     @Post('call-api')
     @Roles('admin', 'manager', 'user')
-    @ApiOperation({ summary: 'Call HIS API with automatic token management' })
+    @ApiOperation({ summary: 'Call HIS API with automatic token management for current user' })
     @ApiResponse({ status: 200, description: 'API called successfully' })
     @ApiResponse({ status: 401, description: 'Authentication failed' })
     @ApiResponse({ status: 400, description: 'API call failed' })
-    async callHISAPI(@Body() hisApiCallDto: HisApiCallDto) {
+    async callHISAPI(@Body() hisApiCallDto: HisApiCallDto, @Request() req: any) {
+        // If username not provided in DTO, get from current user's HIS credentials
+        let targetUsername = hisApiCallDto.username;
+        
+        if (!targetUsername) {
+            const currentUserId = req.user?.sub;
+            if (!currentUserId) {
+                throw new HttpException('User ID not found in JWT token', HttpStatus.UNAUTHORIZED);
+            }
+            
+            const currentUser = await this.hisIntegrationService.getCurrentUserHISUsername(currentUserId);
+            targetUsername = currentUser;
+        }
+        
         const result = await this.hisIntegrationService.callHISAPI(
             hisApiCallDto.endpoint,
             hisApiCallDto.data,
-            hisApiCallDto.username
+            targetUsername
         );
         return ResponseBuilder.success(result);
     }

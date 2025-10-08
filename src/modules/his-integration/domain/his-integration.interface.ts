@@ -13,12 +13,14 @@ export interface IHisTokenRepository {
 }
 
 export interface IHisIntegrationService {
-    loginToHIS(username: string, password: string): Promise<HisToken>;
+    loginToHISWithCurrentUser(currentUserId: string, currentUsername?: string): Promise<HisToken>;
+    loginToHIS(username?: string, password?: string, currentUserId?: string): Promise<HisToken>;
     renewToken(renewCode: string): Promise<HisToken>;
     getValidToken(userLoginName?: string): Promise<HisToken>;
     refreshTokenIfNeeded(userLoginName?: string): Promise<HisToken>;
     callHISAPI(endpoint: string, data?: any, userLoginName?: string): Promise<any>;
     logoutFromHIS(userLoginName: string): Promise<void>;
+    getCurrentUserHISUsername(currentUserId: string): Promise<string>;
     cleanupExpiredTokens(): Promise<void>;
 }
 
