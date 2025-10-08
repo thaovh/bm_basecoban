@@ -24,7 +24,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     handleRequest(err: any, user: any, info: any) {
         if (err || !user) {
-            throw err || new UnauthorizedException('Access token is invalid or expired');
+            // Provide more specific error messages
+            if (info?.name === 'TokenExpiredError') {
+                throw new UnauthorizedException('Access token has expired');
+            } else if (info?.name === 'JsonWebTokenError') {
+                throw new UnauthorizedException('Invalid access token format');
+            } else if (info?.name === 'NotBeforeError') {
+                throw new UnauthorizedException('Access token not active yet');
+            } else if (!info && !user) {
+                throw new UnauthorizedException('Access token is required');
+            } else {
+                throw err || new UnauthorizedException('Access token is invalid or expired');
+            }
         }
         return user;
     }

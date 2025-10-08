@@ -35,24 +35,43 @@ export class AppError extends Error {
 }
 
 export class ResponseBuilder {
-    static success<T>(data: T, statusCode: number = 200): BaseResponse<T> {
+    static success<T>(
+        data: T,
+        statusCode: number = 200,
+        requestId?: string,
+        traceId?: string
+    ): BaseResponse<T> {
         return {
             success: true,
             status_code: statusCode,
             data,
             meta: {
                 timestamp: new Date().toISOString(),
+                request_id: requestId,
+                trace_id: traceId,
             },
         };
     }
 
-    static error(error: AppError, statusCode: number): BaseResponse {
+    static error(
+        error: AppError,
+        statusCode: number,
+        requestId?: string,
+        traceId?: string
+    ): BaseResponse {
         return {
             success: false,
             status_code: statusCode,
-            error,
+            error: {
+                code: error.code,
+                message: error.message,
+                name: error.name,
+                details: error.details,
+            },
             meta: {
                 timestamp: new Date().toISOString(),
+                request_id: requestId,
+                trace_id: traceId,
             },
         };
     }
@@ -63,6 +82,8 @@ export class ResponseBuilder {
         limit: number,
         offset: number,
         statusCode: number = 200,
+        requestId?: string,
+        traceId?: string
     ): BaseResponse<{ items: T[]; pagination: Pagination }> {
         const hasNext = offset + limit < total;
         const hasPrev = offset > 0;
@@ -82,6 +103,8 @@ export class ResponseBuilder {
             },
             meta: {
                 timestamp: new Date().toISOString(),
+                request_id: requestId,
+                trace_id: traceId,
                 pagination: {
                     limit,
                     offset,

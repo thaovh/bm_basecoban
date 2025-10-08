@@ -1,17 +1,21 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TerminusModule } from '@nestjs/terminus';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProvinceModule } from './modules/province/province.module';
 import { WardModule } from './modules/ward/ward.module';
+import { BranchModule } from './modules/branch/branch.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { GlobalExceptionFilter } from './common/filters/exception.filter';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
 
 @Module({
     imports: [
@@ -39,6 +43,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
         AuthModule,
         ProvinceModule,
         WardModule,
+        BranchModule,
     ],
     controllers: [HealthController],
     providers: [
@@ -46,6 +51,20 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
             provide: APP_GUARD,
             useClass: JwtAuthGuard,
         },
+        {
+            provide: APP_FILTER,
+            useClass: GlobalExceptionFilter,
+        },
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: LoggingInterceptor,
+        },
     ],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(RequestIdMiddleware)
+            .forRoutes('*');
+    }
+}

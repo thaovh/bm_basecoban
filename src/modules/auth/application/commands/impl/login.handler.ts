@@ -48,7 +48,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
         if (!user) {
             user = await this.userRepository.findByEmail(loginDto.usernameOrEmail);
         }
-        
+
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
@@ -99,7 +99,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
                 lastName: user.lastName,
                 fullName: user.getFullName(),
                 role: user.role,
-                isActive: user.isActive,
+                isActive: user.isActiveFlag,
                 lastLoginAt: user.lastLoginAt,
             },
             accessToken,

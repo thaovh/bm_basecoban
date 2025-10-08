@@ -9,6 +9,7 @@ export interface WardResponseDto {
     id: string;
     wardCode: string;
     wardName: string;
+    shortName?: string;
     provinceId: string;
     province?: {
         id: string;
@@ -34,7 +35,7 @@ export class GetWardsByProvinceHandler implements IQueryHandler<GetWardsByProvin
     constructor(
         @Inject('IWardRepository')
         private readonly wardRepository: IWardRepository,
-    ) {}
+    ) { }
 
     async execute(query: GetWardsByProvinceQuery): Promise<GetWardsByProvinceResult> {
         const { provinceId, limit, offset } = query;
@@ -46,13 +47,14 @@ export class GetWardsByProvinceHandler implements IQueryHandler<GetWardsByProvin
             id: ward.id,
             wardCode: ward.wardCode,
             wardName: ward.wardName,
+            shortName: ward.shortName,
             provinceId: ward.provinceId,
             province: ward.province ? {
                 id: ward.province.id,
                 provinceCode: ward.province.provinceCode,
                 provinceName: ward.province.provinceName,
             } : undefined,
-            isActive: ward.isActive,
+            isActive: ward.isActiveFlag,
             createdAt: ward.createdAt,
             updatedAt: ward.updatedAt,
         }));

@@ -40,7 +40,7 @@ export class ProvinceRepository implements IProvinceRepository {
 
     async findActiveProvinces(limit: number, offset: number): Promise<[Province[], number]> {
         return this.provinceRepository.findAndCount({
-            where: { isActive: 1, deletedAt: IsNull() },
+            where: { isActiveFlag: 1, deletedAt: IsNull() },
             take: limit,
             skip: offset,
             order: { provinceName: 'ASC' },

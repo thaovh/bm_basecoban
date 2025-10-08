@@ -15,7 +15,7 @@ export class UpdateWardHandler implements ICommandHandler<UpdateWardCommand> {
         private readonly wardRepository: IWardRepository,
         @Inject('IProvinceRepository')
         private readonly provinceRepository: IProvinceRepository,
-    ) {}
+    ) { }
 
     async execute(command: UpdateWardCommand): Promise<Ward> {
         const { id, updateWardDto } = command;
@@ -50,11 +50,14 @@ export class UpdateWardHandler implements ICommandHandler<UpdateWardCommand> {
         if (updateWardDto.wardName) {
             existingWard.wardName = updateWardDto.wardName;
         }
+        if (updateWardDto.shortName !== undefined) {
+            existingWard.shortName = updateWardDto.shortName;
+        }
         if (updateWardDto.provinceId) {
             existingWard.provinceId = updateWardDto.provinceId;
         }
         if (updateWardDto.isActive !== undefined) {
-            existingWard.isActive = updateWardDto.isActive ? 1 : 0;
+            existingWard.isActiveFlag = updateWardDto.isActive ? 1 : 0;
         }
         existingWard.updatedBy = 'system';
 

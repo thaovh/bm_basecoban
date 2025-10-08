@@ -47,8 +47,11 @@ export class UpdateProvinceHandler implements ICommandHandler<UpdateProvinceComm
         if (updateProvinceDto.provinceName) {
             existingProvince.provinceName = updateProvinceDto.provinceName;
         }
+        if (updateProvinceDto.shortName !== undefined) {
+            existingProvince.shortName = updateProvinceDto.shortName;
+        }
         if (updateProvinceDto.isActive !== undefined) {
-            existingProvince.isActive = updateProvinceDto.isActive ? 1 : 0;
+            existingProvince.isActiveFlag = updateProvinceDto.isActive ? 1 : 0;
         }
         existingProvince.updatedBy = 'system';
 

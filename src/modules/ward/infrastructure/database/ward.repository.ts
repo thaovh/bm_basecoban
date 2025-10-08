@@ -10,7 +10,7 @@ export class WardRepository implements IWardRepository {
     constructor(
         @InjectRepository(Ward)
         private readonly wardRepository: Repository<Ward>,
-    ) {}
+    ) { }
 
     async findById(id: string): Promise<Ward | null> {
         return this.wardRepository.findOne({
@@ -49,7 +49,7 @@ export class WardRepository implements IWardRepository {
 
     async findActiveWards(limit: number, offset: number): Promise<[Ward[], number]> {
         return this.wardRepository.findAndCount({
-            where: { isActive: 1, deletedAt: IsNull() },
+            where: { isActiveFlag: 1, deletedAt: IsNull() },
             relations: ['province'],
             take: limit,
             skip: offset,

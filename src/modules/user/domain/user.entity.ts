@@ -1,23 +1,15 @@
 import {
     Entity,
-    PrimaryColumn,
     Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    DeleteDateColumn,
-    VersionColumn,
     Index,
-    BeforeInsert,
 } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseEntity } from '../../../common/entities/base.entity';
 
 @Entity('BMM_USERS')
-@Index('IDX_BMM_USERS_IS_ACTIVE', ['isActive'])
+@Index('IDX_BMM_USERS_IS_ACTIVE', ['isActiveFlag'])
 @Index('IDX_BMM_USERS_CREATED_AT', ['createdAt'])
-export class User {
-    @PrimaryColumn({ name: 'ID', type: 'varchar2', length: 36 })
-    id: string;
+export class User extends BaseEntity {
 
     @Column({ name: 'USERNAME', type: 'varchar2', length: 50, unique: true })
     @ApiProperty({ description: 'Username', example: 'john_doe' })
@@ -56,39 +48,12 @@ export class User {
 
     @Column({ name: 'IS_ACTIVE', type: 'number', default: 1 })
     @ApiProperty({ description: 'Is user active', example: true })
-    isActive: number;
+    isActiveFlag: number;
 
     @Column({ name: 'LAST_LOGIN_AT', type: 'timestamp', nullable: true })
     @ApiProperty({ description: 'Last login timestamp', example: '2024-01-15T10:30:00Z', required: false })
     lastLoginAt?: Date;
 
-    @CreateDateColumn({ name: 'CREATED_AT' })
-    @ApiProperty({ description: 'Creation timestamp', example: '2024-01-15T10:30:00Z' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ name: 'UPDATED_AT' })
-    @ApiProperty({ description: 'Last update timestamp', example: '2024-01-15T10:30:00Z' })
-    updatedAt: Date;
-
-    @DeleteDateColumn({ name: 'DELETED_AT', nullable: true })
-    deletedAt?: Date;
-
-    @Column({ name: 'CREATED_BY', type: 'varchar2', length: 50, nullable: true })
-    createdBy?: string;
-
-    @Column({ name: 'UPDATED_BY', type: 'varchar2', length: 50, nullable: true })
-    updatedBy?: string;
-
-    @VersionColumn({ name: 'VERSION' })
-    version: number;
-
-    // Auto-generate UUID before insert
-    @BeforeInsert()
-    generateId() {
-        if (!this.id) {
-            this.id = uuidv4();
-        }
-    }
 
     // Business methods
     getFullName(): string {
@@ -96,7 +61,7 @@ export class User {
     }
 
     isAccountActive(): boolean {
-        return this.isActive === 1 && !this.deletedAt;
+        return this.isActiveFlag === 1 && super.isActive();
     }
 
     isAdmin(): boolean {

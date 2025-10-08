@@ -17,6 +17,12 @@ export class UpdateWardDto {
     @MaxLength(100)
     wardName?: string;
 
+    @ApiProperty({ description: 'Ward short name', example: 'BN', required: false })
+    @IsOptional()
+    @IsString()
+    @MaxLength(50)
+    shortName?: string;
+
     @ApiProperty({ description: 'Province ID', example: 'f1b42d3b-eccf-40f2-8305-4ee4cac61525', required: false })
     @IsOptional()
     @IsUUID()

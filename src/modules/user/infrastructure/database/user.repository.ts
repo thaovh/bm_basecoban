@@ -40,7 +40,7 @@ export class UserRepository implements IUserRepository {
 
     async findActiveUsers(limit: number, offset: number): Promise<[User[], number]> {
         return this.userRepository.findAndCount({
-            where: { isActive: 1, deletedAt: IsNull() },
+            where: { isActiveFlag: 1, deletedAt: IsNull() },
             take: limit,
             skip: offset,
             order: { createdAt: 'DESC' },

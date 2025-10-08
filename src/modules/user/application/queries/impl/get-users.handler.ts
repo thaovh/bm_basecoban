@@ -61,7 +61,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
             // Filter by isActive if specified
             if (isActive !== undefined) {
                 const activeValue = isActive ? 1 : 0;
-                users = users.filter(user => user.isActive === activeValue);
+                users = users.filter(user => user.isActiveFlag === activeValue);
                 total = users.length;
             }
 
@@ -76,7 +76,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
                 dateOfBirth: user.dateOfBirth,
                 address: user.address,
                 role: user.role,
-                isActive: user.isActive,
+                isActive: user.isActiveFlag,
                 lastLoginAt: user.lastLoginAt,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,

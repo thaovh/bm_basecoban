@@ -15,7 +15,7 @@ export class CreateWardHandler implements ICommandHandler<CreateWardCommand> {
         private readonly wardRepository: IWardRepository,
         @Inject('IProvinceRepository')
         private readonly provinceRepository: IProvinceRepository,
-    ) {}
+    ) { }
 
     async execute(command: CreateWardCommand): Promise<Ward> {
         const { createWardDto } = command;
@@ -37,8 +37,9 @@ export class CreateWardHandler implements ICommandHandler<CreateWardCommand> {
         const ward = new Ward();
         ward.wardCode = createWardDto.wardCode;
         ward.wardName = createWardDto.wardName;
+        ward.shortName = createWardDto.shortName;
         ward.provinceId = createWardDto.provinceId;
-        ward.isActive = createWardDto.isActive ? 1 : 1; // Default to active
+        ward.isActiveFlag = createWardDto.isActive ? 1 : 1; // Default to active
         ward.createdBy = 'system';
 
         const savedWard = await this.wardRepository.save(ward);

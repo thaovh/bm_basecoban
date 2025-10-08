@@ -9,6 +9,7 @@ export interface ProvinceResponseDto {
     id: string;
     provinceCode: string;
     provinceName: string;
+    shortName?: string;
     isActive: number;
     createdAt: Date;
     updatedAt: Date;
@@ -36,7 +37,8 @@ export class GetProvinceByIdHandler implements IQueryHandler<GetProvinceByIdQuer
             id: province.id,
             provinceCode: province.provinceCode,
             provinceName: province.provinceName,
-            isActive: province.isActive,
+            shortName: province.shortName,
+            isActive: province.isActiveFlag,
             createdAt: province.createdAt,
             updatedAt: province.updatedAt,
         };

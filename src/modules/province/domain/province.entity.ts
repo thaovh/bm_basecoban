@@ -1,25 +1,17 @@
 import {
     Entity,
-    PrimaryColumn,
     Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    DeleteDateColumn,
-    VersionColumn,
     Index,
     OneToMany,
-    BeforeInsert,
 } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseEntity } from '../../../common/entities/base.entity';
 
 @Entity('BMM_PROVINCES')
 @Index('IDX_BMM_PROV_NAME', ['provinceName'])
-@Index('IDX_BMM_PROV_ACTIVE', ['isActive'])
+@Index('IDX_BMM_PROV_ACTIVE', ['isActiveFlag'])
 @Index('IDX_BMM_PROV_CREATED', ['createdAt'])
-export class Province {
-    @PrimaryColumn({ name: 'ID', type: 'varchar2', length: 36 })
-    id: string;
+export class Province extends BaseEntity {
 
     @Column({ name: 'PROVINCE_CODE', type: 'varchar2', length: 10, unique: true })
     @ApiProperty({ description: 'Province code', example: '01' })
@@ -29,49 +21,26 @@ export class Province {
     @ApiProperty({ description: 'Province name', example: 'Hà Nội' })
     provinceName: string;
 
+    @Column({ name: 'SHORT_NAME', type: 'varchar2', length: 50, nullable: true })
+    @ApiProperty({ description: 'Province short name', example: 'HN', required: false })
+    shortName?: string;
+
     @Column({ name: 'IS_ACTIVE', type: 'number', default: 1 })
     @ApiProperty({ description: 'Is province active', example: true })
-    isActive: number;
+    isActiveFlag: number;
 
-    @CreateDateColumn({ name: 'CREATED_AT' })
-    @ApiProperty({ description: 'Creation timestamp', example: '2024-01-15T10:30:00Z' })
-    createdAt: Date;
-
-    @UpdateDateColumn({ name: 'UPDATED_AT' })
-    @ApiProperty({ description: 'Last update timestamp', example: '2024-01-15T10:30:00Z' })
-    updatedAt: Date;
-
-    @DeleteDateColumn({ name: 'DELETED_AT', nullable: true })
-    deletedAt?: Date;
-
-    @Column({ name: 'CREATED_BY', type: 'varchar2', length: 50, nullable: true })
-    createdBy?: string;
-
-    @Column({ name: 'UPDATED_BY', type: 'varchar2', length: 50, nullable: true })
-    updatedBy?: string;
-
-    @VersionColumn({ name: 'VERSION' })
-    version: number;
-
-    // Auto-generate UUID before insert
-    @BeforeInsert()
-    generateId() {
-        if (!this.id) {
-            this.id = uuidv4();
-        }
-    }
 
     // Business methods
     isProvinceActive(): boolean {
-        return this.isActive === 1 && !this.deletedAt;
+        return this.isActiveFlag === 1 && super.isActive();
     }
 
     activate(): void {
-        this.isActive = 1;
+        this.isActiveFlag = 1;
     }
 
     deactivate(): void {
-        this.isActive = 0;
+        this.isActiveFlag = 0;
     }
 
     // Relationship

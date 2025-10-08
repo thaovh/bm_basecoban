@@ -35,7 +35,8 @@ export class CreateProvinceHandler implements ICommandHandler<CreateProvinceComm
         const province = new Province();
         province.provinceCode = createProvinceDto.provinceCode;
         province.provinceName = createProvinceDto.provinceName;
-        province.isActive = createProvinceDto.isActive ? 1 : 1; // Default to active
+        province.shortName = createProvinceDto.shortName;
+        province.isActiveFlag = createProvinceDto.isActive ? 1 : 1; // Default to active
         province.createdBy = 'system';
 
         const savedProvince = await this.provinceRepository.save(province);

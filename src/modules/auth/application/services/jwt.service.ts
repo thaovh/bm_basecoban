@@ -74,7 +74,7 @@ export class JwtAuthService {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 role: user.role,
-                isActive: user.isActive,
+                isActive: user.isActiveFlag,
             },
         };
     }

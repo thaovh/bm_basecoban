@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         try {
             // Validate the payload
             if (!payload.sub || !payload.username || !payload.role) {
-                throw new UnauthorizedException('Invalid token payload');
+                throw new UnauthorizedException('Invalid token payload: missing required fields');
             }
 
             // Return the payload to be attached to request.user
@@ -32,7 +32,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
                 role: payload.role,
             };
         } catch (error) {
-            throw new UnauthorizedException('Token validation failed');
+            if (error instanceof UnauthorizedException) {
+                throw error;
+            }
+            throw new UnauthorizedException('Token validation failed: ' + (error as Error).message);
         }
     }
 }

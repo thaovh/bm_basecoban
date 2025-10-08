@@ -17,6 +17,12 @@ export class UpdateProvinceDto {
     @MaxLength(100)
     provinceName?: string;
 
+    @ApiProperty({ description: 'Province short name', example: 'HN', required: false })
+    @IsOptional()
+    @IsString()
+    @MaxLength(50)
+    shortName?: string;
+
     @ApiProperty({ description: 'Is province active', example: true, required: false })
     @IsOptional()
     isActive?: boolean;

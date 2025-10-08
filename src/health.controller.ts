@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Public } from './common/decorators/public.decorator';
 
@@ -41,5 +41,31 @@ export class HealthController {
                 timestamp: new Date().toISOString(),
             },
         };
+    }
+
+    @Get('test-auth')
+    @ApiOperation({ summary: 'Test authentication endpoint (requires JWT token)' })
+    @ApiResponse({ status: 200, description: 'Authentication successful' })
+    @ApiResponse({ status: 401, description: 'Authentication failed' })
+    testAuth() {
+        return {
+            success: true,
+            status_code: 200,
+            data: {
+                message: 'Authentication successful',
+                timestamp: new Date().toISOString(),
+            },
+            meta: {
+                timestamp: new Date().toISOString(),
+            },
+        };
+    }
+
+    @Get('test-error')
+    @Public()
+    @ApiOperation({ summary: 'Test error response format' })
+    @ApiResponse({ status: 401, description: 'Test error' })
+    testError() {
+        throw new UnauthorizedException('Test error message');
     }
 }

@@ -28,12 +28,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
                 const responseObj = exceptionResponse as any;
                 error = new AppError(
-                    responseObj.code || 'HTTP_ERROR',
-                    responseObj.message || exception.message,
+                    responseObj.code || `HTTP_${status}`,
+                    responseObj.message || exception.message || 'An error occurred',
                     responseObj.details
                 );
             } else {
-                error = new AppError('HTTP_ERROR', exception.message);
+                // Handle string response - this is the common case for UnauthorizedException
+                const message = typeof exceptionResponse === 'string'
+                    ? exceptionResponse
+                    : exception.message || 'An error occurred';
+                error = new AppError(`HTTP_${status}`, message);
             }
         } else if (exception instanceof AppError) {
             status = getStatusFromErrorCode(exception.code);
@@ -44,10 +48,16 @@ export class GlobalExceptionFilter implements ExceptionFilter {
             error = new AppError('SYS_001', 'Internal server error');
         }
 
+        // Extract request tracking information
+        const requestId = request['requestId'] || request.headers['x-request-id'];
+        const traceId = request['traceId'] || request.headers['x-trace-id'];
+
         // Log the error
         this.logger.error(
             `HTTP ${status} Error: ${error.message}`,
             {
+                requestId,
+                traceId,
                 code: error.code,
                 path: request.url,
                 method: request.method,
@@ -59,7 +69,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         );
 
         // Send error response
-        const errorResponse = ResponseBuilder.error(error, status);
+        const errorResponse = ResponseBuilder.error(error, status, requestId, traceId);
         response.status(status).json(errorResponse);
     }
 }

@@ -21,9 +21,15 @@ export class LoggingInterceptor implements NestInterceptor {
         const ip = request.ip;
         const startTime = Date.now();
 
+        // Extract request tracking information
+        const requestId = request['requestId'] || request.headers['x-request-id'];
+        const traceId = request['traceId'] || request.headers['x-trace-id'];
+
         this.logger.log(
             `Incoming Request: ${method} ${url}`,
             {
+                requestId,
+                traceId,
                 method,
                 url,
                 body: this.sanitizeBody(body),
@@ -42,6 +48,8 @@ export class LoggingInterceptor implements NestInterceptor {
                     this.logger.log(
                         `Outgoing Response: ${method} ${url} - ${response.statusCode} (${duration}ms)`,
                         {
+                            requestId,
+                            traceId,
                             method,
                             url,
                             statusCode: response.statusCode,
@@ -56,6 +64,8 @@ export class LoggingInterceptor implements NestInterceptor {
                     this.logger.error(
                         `Request Error: ${method} ${url} - ${error.status || 500} (${duration}ms)`,
                         {
+                            requestId,
+                            traceId,
                             method,
                             url,
                             statusCode: error.status || 500,
