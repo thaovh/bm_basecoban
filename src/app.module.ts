@@ -10,6 +10,9 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ProvinceModule } from './modules/province/province.module';
 import { WardModule } from './modules/ward/ward.module';
 import { BranchModule } from './modules/branch/branch.module';
+import { DepartmentTypeModule } from './modules/department-type/department-type.module';
+import { DepartmentModule } from './modules/department/department.module';
+import { RoomModule } from './modules/room/room.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -44,6 +47,9 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         ProvinceModule,
         WardModule,
         BranchModule,
+        DepartmentTypeModule,
+        DepartmentModule,
+        RoomModule,
     ],
     controllers: [HealthController],
     providers: [
