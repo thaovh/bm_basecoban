@@ -98,8 +98,8 @@ export class DualAuthGuard extends AuthGuard('jwt') {
             return true;
 
         } catch (error) {
-            this.logger.error(`HIS authentication failed: ${error.message}`);
-            throw new UnauthorizedException(`HIS authentication failed: ${error.message}`);
+            this.logger.error(`HIS authentication failed: ${(error as Error).message}`);
+            throw new UnauthorizedException(`HIS authentication failed: ${(error as Error).message}`);
         }
     }
 
