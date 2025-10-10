@@ -1,6 +1,6 @@
--- Migration: Fix User entity migration - handle unused columns properly
+-- Migration: Complete User entity migration for fresh database
 -- Date: 2025-10-10
--- Description: Fix Oracle unused columns issue and complete User entity migration
+-- Description: Complete User entity migration for newly created tables
 
 -- First, check if FULL_NAME column exists, if not add it
 DECLARE
@@ -16,14 +16,19 @@ BEGIN
 END;
 /
 
--- Update existing data (concatenate firstName + lastName if they exist)
-UPDATE BMM_USERS 
-SET FULL_NAME = TRIM(FIRST_NAME || ' ' || LAST_NAME)
-WHERE FIRST_NAME IS NOT NULL AND LAST_NAME IS NOT NULL
-AND FULL_NAME IS NULL;
-
--- Make FULL_NAME NOT NULL after data migration
-ALTER TABLE BMM_USERS MODIFY FULL_NAME NOT NULL;
+-- Make FULL_NAME NOT NULL (for fresh tables, this should work)
+DECLARE
+    column_exists NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO column_exists
+    FROM USER_TAB_COLUMNS 
+    WHERE TABLE_NAME = 'BMM_USERS' AND COLUMN_NAME = 'FULL_NAME' AND NULLABLE = 'Y';
+    
+    IF column_exists > 0 THEN
+        EXECUTE IMMEDIATE 'ALTER TABLE BMM_USERS MODIFY FULL_NAME NOT NULL';
+    END IF;
+END;
+/
 
 -- Add new fields for location and department if they don't exist
 DECLARE
@@ -136,28 +141,6 @@ BEGIN
 END;
 /
 
--- Finally, drop unused columns properly
-DECLARE
-    column_exists NUMBER;
-BEGIN
-    -- Check if FIRST_NAME column exists and is unused
-    SELECT COUNT(*) INTO column_exists
-    FROM USER_TAB_COLUMNS 
-    WHERE TABLE_NAME = 'BMM_USERS' AND COLUMN_NAME = 'FIRST_NAME';
-    
-    IF column_exists > 0 THEN
-        EXECUTE IMMEDIATE 'ALTER TABLE BMM_USERS SET UNUSED COLUMN FIRST_NAME';
-    END IF;
-    
-    -- Check if LAST_NAME column exists and is unused
-    SELECT COUNT(*) INTO column_exists
-    FROM USER_TAB_COLUMNS 
-    WHERE TABLE_NAME = 'BMM_USERS' AND COLUMN_NAME = 'LAST_NAME';
-    
-    IF column_exists > 0 THEN
-        EXECUTE IMMEDIATE 'ALTER TABLE BMM_USERS SET UNUSED COLUMN LAST_NAME';
-    END IF;
-END;
-/
+-- Note: No need to handle unused columns since table was recreated
 
 COMMIT;
