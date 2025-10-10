@@ -9,6 +9,9 @@ export interface IUserRepository {
     findAll(): Promise<User[]>;
     findActiveUsers(limit: number, offset: number): Promise<[User[], number]>;
     findUsersByRole(role: 'admin' | 'user', limit: number, offset: number): Promise<[User[], number]>;
+    findUsersByDepartment(departmentId: string, limit: number, offset: number): Promise<[User[], number]>;
+    findUsersByProvince(provinceId: string, limit: number, offset: number): Promise<[User[], number]>;
+    findUsersByWard(wardId: string, limit: number, offset: number): Promise<[User[], number]>;
     searchUsers(searchTerm: string, limit: number, offset: number): Promise<[User[], number]>;
 }
 
@@ -30,22 +33,26 @@ export interface CreateUserData {
     username: string;
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
+    fullName: string;
     phoneNumber?: string;
     dateOfBirth?: Date;
     address?: string;
     role?: 'admin' | 'user';
+    provinceId?: string;
+    wardId?: string;
+    departmentId?: string;
     createdBy?: string;
 }
 
 export interface UpdateUserData {
-    firstName?: string;
-    lastName?: string;
+    fullName?: string;
     phoneNumber?: string;
     dateOfBirth?: Date;
     address?: string;
     role?: 'admin' | 'user';
+    provinceId?: string;
+    wardId?: string;
+    departmentId?: string;
     isActive?: boolean;
     updatedBy?: string;
 }

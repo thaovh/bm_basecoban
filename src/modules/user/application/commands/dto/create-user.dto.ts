@@ -19,17 +19,11 @@ export class CreateUserDto {
     @MaxLength(100)
     password: string;
 
-    @ApiProperty({ description: 'First name', example: 'John' })
+    @ApiProperty({ description: 'Full name', example: 'John Doe' })
     @IsString()
     @MinLength(1)
-    @MaxLength(50)
-    firstName: string;
-
-    @ApiProperty({ description: 'Last name', example: 'Doe' })
-    @IsString()
-    @MinLength(1)
-    @MaxLength(50)
-    lastName: string;
+    @MaxLength(100)
+    fullName: string;
 
     @ApiProperty({ description: 'Phone number', example: '+84901234567', required: false })
     @IsOptional()
@@ -52,4 +46,19 @@ export class CreateUserDto {
     @IsOptional()
     @IsEnum(['admin', 'user'])
     role?: 'admin' | 'user';
+
+    @ApiProperty({ description: 'Province ID', example: 'uuid-province-id', required: false })
+    @IsOptional()
+    @IsString()
+    provinceId?: string;
+
+    @ApiProperty({ description: 'Ward ID', example: 'uuid-ward-id', required: false })
+    @IsOptional()
+    @IsString()
+    wardId?: string;
+
+    @ApiProperty({ description: 'Department ID', example: 'uuid-department-id', required: false })
+    @IsOptional()
+    @IsString()
+    departmentId?: string;
 }

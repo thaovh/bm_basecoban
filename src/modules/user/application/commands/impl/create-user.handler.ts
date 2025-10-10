@@ -40,12 +40,14 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
             user.username = createUserDto.username;
             user.email = createUserDto.email;
             user.passwordHash = await this.hashPassword(createUserDto.password);
-            user.firstName = createUserDto.firstName;
-            user.lastName = createUserDto.lastName;
+            user.fullName = createUserDto.fullName;
             user.phoneNumber = createUserDto.phoneNumber;
             user.dateOfBirth = createUserDto.dateOfBirth ? new Date(createUserDto.dateOfBirth) : undefined;
             user.address = createUserDto.address;
             user.role = createUserDto.role || 'user';
+            user.provinceId = createUserDto.provinceId;
+            user.wardId = createUserDto.wardId;
+            user.departmentId = createUserDto.departmentId;
             user.isActiveFlag = 1;
             user.createdBy = 'system'; // TODO: Get from authenticated user context
 

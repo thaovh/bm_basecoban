@@ -2,9 +2,14 @@ import {
     Entity,
     Column,
     Index,
+    ManyToOne,
+    JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from '../../../common/entities/base.entity';
+import { Province } from '../../province/domain/province.entity';
+import { Ward } from '../../ward/domain/ward.entity';
+import { Department } from '../../department/domain/department.entity';
 
 @Entity('BMM_USERS')
 @Index('IDX_BMM_USERS_IS_ACTIVE', ['isActiveFlag'])
@@ -22,13 +27,9 @@ export class User extends BaseEntity {
     @Column({ name: 'PASSWORD_HASH', type: 'varchar2', length: 255 })
     passwordHash: string;
 
-    @Column({ name: 'FIRST_NAME', type: 'varchar2', length: 50 })
-    @ApiProperty({ description: 'First name', example: 'John' })
-    firstName: string;
-
-    @Column({ name: 'LAST_NAME', type: 'varchar2', length: 50 })
-    @ApiProperty({ description: 'Last name', example: 'Doe' })
-    lastName: string;
+    @Column({ name: 'FULL_NAME', type: 'varchar2', length: 100 })
+    @ApiProperty({ description: 'Full name', example: 'John Doe' })
+    fullName: string;
 
     @Column({ name: 'PHONE_NUMBER', type: 'varchar2', length: 20, nullable: true })
     @ApiProperty({ description: 'Phone number', example: '+84901234567', required: false })
@@ -62,10 +63,34 @@ export class User extends BaseEntity {
     @ApiProperty({ description: 'HIS password for integration', example: 't123456', required: false })
     hisPassword?: string;
 
+    @Column({ name: 'PROVINCE_ID', type: 'varchar2', length: 36, nullable: true })
+    @ApiProperty({ description: 'Province ID', example: 'uuid-province-id', required: false })
+    provinceId?: string;
+
+    @Column({ name: 'WARD_ID', type: 'varchar2', length: 36, nullable: true })
+    @ApiProperty({ description: 'Ward ID', example: 'uuid-ward-id', required: false })
+    wardId?: string;
+
+    @Column({ name: 'DEPARTMENT_ID', type: 'varchar2', length: 36, nullable: true })
+    @ApiProperty({ description: 'Department ID', example: 'uuid-department-id', required: false })
+    departmentId?: string;
+
+    // Relationships
+    @ManyToOne(() => Province, { nullable: true })
+    @JoinColumn({ name: 'PROVINCE_ID', foreignKeyConstraintName: 'FK_USER_PROVINCE' })
+    province?: Province;
+
+    @ManyToOne(() => Ward, { nullable: true })
+    @JoinColumn({ name: 'WARD_ID', foreignKeyConstraintName: 'FK_USER_WARD' })
+    ward?: Ward;
+
+    @ManyToOne(() => Department, { nullable: true })
+    @JoinColumn({ name: 'DEPARTMENT_ID', foreignKeyConstraintName: 'FK_USER_DEPARTMENT' })
+    department?: Department;
 
     // Business methods
     getFullName(): string {
-        return `${this.firstName} ${this.lastName}`;
+        return this.fullName;
     }
 
     isAccountActive(): boolean {

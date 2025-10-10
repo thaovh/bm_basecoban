@@ -1,6 +1,7 @@
 import { QueryHandler, IQueryHandler } from '@nestjs/cqrs';
 import { Inject, Logger } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, IsNull } from 'typeorm';
 
 import { GetUsersQuery } from '../get-users.query';
 import { User } from '../../../domain/user.entity';
@@ -18,13 +19,32 @@ export interface UserResponseDto {
     id: string;
     username: string;
     email: string;
-    firstName: string;
-    lastName: string;
     fullName: string;
     phoneNumber?: string;
     dateOfBirth?: Date;
     address?: string;
     role: 'admin' | 'user';
+    provinceId?: string;
+    wardId?: string;
+    departmentId?: string;
+    province?: {
+        id: string;
+        provinceName: string;
+        provinceCode: string;
+        shortName?: string;
+    };
+    ward?: {
+        id: string;
+        wardName: string;
+        wardCode: string;
+        shortName?: string;
+    };
+    department?: {
+        id: string;
+        departmentName: string;
+        departmentCode: string;
+        shortName?: string;
+    };
     isActive: number;
     lastLoginAt?: Date;
     createdAt: Date;
@@ -38,6 +58,8 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
     constructor(
         @Inject('IUserRepository')
         private readonly userRepository: IUserRepository,
+        @InjectRepository(User)
+        private readonly userRepo: Repository<User>,
     ) { }
 
     async execute(query: GetUsersQuery): Promise<GetUsersResult> {
@@ -55,7 +77,14 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
             } else if (role) {
                 [users, total] = await this.userRepository.findUsersByRole(role, limit, offset);
             } else {
-                [users, total] = await this.userRepository.findActiveUsers(limit, offset);
+                // Load relationships for active users
+                [users, total] = await this.userRepo.findAndCount({
+                    where: { isActiveFlag: 1, deletedAt: IsNull() },
+                    relations: ['province', 'ward', 'department'],
+                    take: limit,
+                    skip: offset,
+                    order: { createdAt: 'DESC' },
+                });
             }
 
             // Filter by isActive if specified
@@ -69,13 +98,32 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
                 id: user.id,
                 username: user.username,
                 email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                fullName: user.getFullName(),
+                fullName: user.fullName,
                 phoneNumber: user.phoneNumber,
                 dateOfBirth: user.dateOfBirth,
                 address: user.address,
                 role: user.role,
+                provinceId: user.provinceId,
+                wardId: user.wardId,
+                departmentId: user.departmentId,
+                province: user.province ? {
+                    id: user.province.id,
+                    provinceName: user.province.provinceName,
+                    provinceCode: user.province.provinceCode,
+                    shortName: user.province.shortName,
+                } : undefined,
+                ward: user.ward ? {
+                    id: user.ward.id,
+                    wardName: user.ward.wardName,
+                    wardCode: user.ward.wardCode,
+                    shortName: user.ward.shortName,
+                } : undefined,
+                department: user.department ? {
+                    id: user.department.id,
+                    departmentName: user.department.departmentName,
+                    departmentCode: user.department.departmentCode,
+                    shortName: user.department.shortName,
+                } : undefined,
                 isActive: user.isActiveFlag,
                 lastLoginAt: user.lastLoginAt,
                 createdAt: user.createdAt,

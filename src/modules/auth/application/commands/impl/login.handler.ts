@@ -20,8 +20,6 @@ export interface UserResponseDto {
     id: string;
     username: string;
     email: string;
-    firstName: string;
-    lastName: string;
     fullName: string;
     role: 'admin' | 'user';
     isActive: number;
@@ -95,9 +93,7 @@ export class LoginHandler implements ICommandHandler<LoginCommand> {
                 id: user.id,
                 username: user.username,
                 email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                fullName: user.getFullName(),
+                fullName: user.fullName,
                 role: user.role,
                 isActive: user.isActiveFlag,
                 lastLoginAt: user.lastLoginAt,

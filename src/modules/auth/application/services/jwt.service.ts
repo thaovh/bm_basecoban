@@ -18,8 +18,7 @@ export interface LoginResponse {
         id: string;
         username: string;
         email: string;
-        firstName: string;
-        lastName: string;
+        fullName: string;
         role: 'admin' | 'user';
         isActive: number;
     };
@@ -71,8 +70,7 @@ export class JwtAuthService {
                 id: user.id,
                 username: user.username,
                 email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
+                fullName: user.fullName,
                 role: user.role,
                 isActive: user.isActiveFlag,
             },

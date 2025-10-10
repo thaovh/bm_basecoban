@@ -15,6 +15,7 @@ export class UserRepository implements IUserRepository {
     async findById(id: string): Promise<User | null> {
         return this.userRepository.findOne({
             where: { id, deletedAt: IsNull() },
+            relations: ['province', 'ward', 'department'],
         });
     }
 
@@ -63,12 +64,45 @@ export class UserRepository implements IUserRepository {
         });
     }
 
+    async findUsersByDepartment(departmentId: string, limit: number, offset: number): Promise<[User[], number]> {
+        return this.userRepository.findAndCount({
+            where: { departmentId, deletedAt: IsNull() },
+            relations: ['province', 'ward', 'department'],
+            take: limit,
+            skip: offset,
+            order: { createdAt: 'DESC' },
+        });
+    }
+
+    async findUsersByProvince(provinceId: string, limit: number, offset: number): Promise<[User[], number]> {
+        return this.userRepository.findAndCount({
+            where: { provinceId, deletedAt: IsNull() },
+            relations: ['province', 'ward', 'department'],
+            take: limit,
+            skip: offset,
+            order: { createdAt: 'DESC' },
+        });
+    }
+
+    async findUsersByWard(wardId: string, limit: number, offset: number): Promise<[User[], number]> {
+        return this.userRepository.findAndCount({
+            where: { wardId, deletedAt: IsNull() },
+            relations: ['province', 'ward', 'department'],
+            take: limit,
+            skip: offset,
+            order: { createdAt: 'DESC' },
+        });
+    }
+
     async searchUsers(searchTerm: string, limit: number, offset: number): Promise<[User[], number]> {
         const queryBuilder = this.userRepository
             .createQueryBuilder('user')
+            .leftJoinAndSelect('user.province', 'province')
+            .leftJoinAndSelect('user.ward', 'ward')
+            .leftJoinAndSelect('user.department', 'department')
             .where('user.deletedAt IS NULL')
             .andWhere(
-                '(user.firstName LIKE :search OR user.lastName LIKE :search OR user.email LIKE :search OR user.username LIKE :search)',
+                '(user.fullName LIKE :search OR user.email LIKE :search OR user.username LIKE :search)',
                 { search: `%${searchTerm}%` }
             )
             .orderBy('user.createdAt', 'DESC')
