@@ -6,6 +6,7 @@ export interface IUserRepository {
     findByUsername(username: string): Promise<User | null>;
     save(user: User): Promise<User>;
     delete(id: string): Promise<void>;
+    findAll(): Promise<User[]>;
     findActiveUsers(limit: number, offset: number): Promise<[User[], number]>;
     findUsersByRole(role: 'admin' | 'user', limit: number, offset: number): Promise<[User[], number]>;
     searchUsers(searchTerm: string, limit: number, offset: number): Promise<[User[], number]>;

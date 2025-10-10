@@ -38,6 +38,13 @@ export class UserRepository implements IUserRepository {
         await this.userRepository.softDelete(id);
     }
 
+    async findAll(): Promise<User[]> {
+        return this.userRepository.find({
+            where: { deletedAt: IsNull() },
+            order: { createdAt: 'DESC' },
+        });
+    }
+
     async findActiveUsers(limit: number, offset: number): Promise<[User[], number]> {
         return this.userRepository.findAndCount({
             where: { isActiveFlag: 1, deletedAt: IsNull() },

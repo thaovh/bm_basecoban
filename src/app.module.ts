@@ -17,7 +17,9 @@ import { SampleTypeModule } from './modules/sample-type/sample-type.module';
 import { HisIntegrationModule } from './modules/his-integration/his-integration.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { DualAuthGuard } from './common/guards/dual-auth.guard';
+import { HisIntegrationService } from './modules/his-integration/application/services/his-integration.service';
+import { UserRepository } from './modules/user/infrastructure/database/user.repository';
 import { GlobalExceptionFilter } from './common/filters/exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
@@ -59,7 +61,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
     providers: [
         {
             provide: APP_GUARD,
-            useClass: JwtAuthGuard,
+            useClass: DualAuthGuard,
         },
         {
             provide: APP_FILTER,
@@ -68,6 +70,11 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         {
             provide: APP_INTERCEPTOR,
             useClass: LoggingInterceptor,
+        },
+        HisIntegrationService,
+        {
+            provide: 'IUserRepository',
+            useClass: UserRepository,
         },
     ],
 })

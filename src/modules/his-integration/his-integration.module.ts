@@ -7,6 +7,7 @@ import { HisTokenRepository } from './infrastructure/database/his-token.reposito
 import { HisHttpClientService } from './infrastructure/http/his-http-client.service';
 import { HisIntegrationService } from './application/services/his-integration.service';
 import { HisIntegrationController } from './his-integration.controller';
+import { HisProtectedController } from './his-protected.controller';
 import { User } from '../user/domain/user.entity';
 import { UserRepository } from '../user/infrastructure/database/user.repository';
 
@@ -15,7 +16,7 @@ import { UserRepository } from '../user/infrastructure/database/user.repository'
         TypeOrmModule.forFeature([HisToken, User]),
         ConfigModule,
     ],
-    controllers: [HisIntegrationController],
+    controllers: [HisIntegrationController, HisProtectedController],
     providers: [
         {
             provide: 'IHisTokenRepository',
