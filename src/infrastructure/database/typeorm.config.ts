@@ -24,11 +24,11 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
     password: configService.get('DATABASE_PASSWORD', 'LIS_RS'),
     serviceName: configService.get('DATABASE_SERVICE_NAME', 'orclstb'),
     entities: [__dirname + '/../../modules/**/domain/*.entity{.ts,.js}'],
-    synchronize: true, // Disable to avoid index conflicts
+    synchronize: false, // Disable to use migrations instead
     logging: configService.get('NODE_ENV') === 'development',
     namingStrategy: new BMMNamingStrategy(),
     migrations: ['dist/migrations/*.js'],
-    migrationsRun: false, // Disable for now
+    migrationsRun: true, // Enable migrations
     extra: {
       // Oracle specific configurations
       connectString: `${configService.get('DATABASE_HOST')}:${configService.get('DATABASE_PORT')}/${configService.get('DATABASE_SERVICE_NAME')}`,
