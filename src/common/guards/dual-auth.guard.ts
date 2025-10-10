@@ -65,33 +65,36 @@ export class DualAuthGuard extends AuthGuard('jwt') {
                 throw new UnauthorizedException('HIS token has expired');
             }
 
-            // Find user by HIS username
-            const user = await this.userRepository.findByUsername(hisTokenEntity.userLoginName);
-            if (!user) {
-                // If user not found by HIS username, try to find by hisUsername field
-                const users = await this.userRepository.findAll();
-                const userWithHisCredentials = users.find(u => u.hisUsername === hisTokenEntity.userLoginName);
-                
-                if (!userWithHisCredentials) {
-                    throw new UnauthorizedException(`User not found for HIS username: ${hisTokenEntity.userLoginName}`);
+            // Find user by HIS username (optional for direct login)
+            let appUser = null;
+            try {
+                appUser = await this.userRepository.findByUsername(hisTokenEntity.userLoginName);
+                if (!appUser) {
+                    // If user not found by HIS username, try to find by hisUsername field
+                    const users = await this.userRepository.findAll();
+                    appUser = users.find(u => u.hisUsername === hisTokenEntity.userLoginName);
                 }
+            } catch (error) {
+                this.logger.warn(`Could not find app user for HIS username: ${hisTokenEntity.userLoginName}`);
+            }
 
-                // Attach user info to request
+            // Attach user info to request (with or without app user mapping)
+            if (appUser) {
                 request.user = {
-                    sub: userWithHisCredentials.id,
-                    username: userWithHisCredentials.username,
-                    email: userWithHisCredentials.email,
-                    role: userWithHisCredentials.role,
+                    sub: appUser.id,
+                    username: appUser.username,
+                    email: appUser.email,
+                    role: appUser.role,
                     hisUsername: hisTokenEntity.userLoginName,
                     hisToken: hisTokenEntity,
                 };
             } else {
-                // Attach user info to request
+                // For direct login without app user mapping
                 request.user = {
-                    sub: user.id,
-                    username: user.username,
-                    email: user.email,
-                    role: user.role,
+                    sub: hisTokenEntity.userLoginName, // Use HIS username as sub
+                    username: hisTokenEntity.userLoginName,
+                    email: hisTokenEntity.userEmail || '',
+                    role: 'user', // Default role
                     hisUsername: hisTokenEntity.userLoginName,
                     hisToken: hisTokenEntity,
                 };
