@@ -90,6 +90,48 @@ export class HisIntegrationService implements IHisIntegrationService {
         }
     }
 
+    async loginToHISDirect(username: string, password: string): Promise<HisToken> {
+        try {
+            this.logger.log(`Direct login to HIS for user: ${username}`);
+
+            // Call HIS login API directly
+            const loginResponse: HisLoginResponse = await this.hisHttpClient.loginToHIS(username, password);
+
+            // Check if user already has an active token
+            const existingToken = await this.hisTokenRepository.findActiveTokenByUser(username);
+            if (existingToken) {
+                // Deactivate existing token
+                existingToken.deactivate();
+                await this.hisTokenRepository.save(existingToken);
+            }
+
+            // Create new token entity
+            const hisToken = new HisToken();
+            hisToken.tokenCode = loginResponse.TokenCode;
+            hisToken.renewCode = loginResponse.RenewCode;
+            hisToken.loginTime = new Date(loginResponse.LoginTime);
+            hisToken.expireTime = new Date(loginResponse.ExpireTime);
+            hisToken.loginAddress = loginResponse.LoginAddress;
+            hisToken.userLoginName = loginResponse.User.LoginName;
+            hisToken.userName = loginResponse.User.UserName;
+            hisToken.userEmail = loginResponse.User.Email;
+            hisToken.userMobile = loginResponse.User.Mobile;
+            hisToken.userGCode = loginResponse.User.GCode;
+            hisToken.applicationCode = loginResponse.User.ApplicationCode;
+            hisToken.roleDatas = loginResponse.RoleDatas ? JSON.stringify(loginResponse.RoleDatas) : null;
+            hisToken.isActiveFlag = 1;
+            hisToken.createdBy = 'direct_login'; // Mark as direct login
+
+            const savedToken = await this.hisTokenRepository.save(hisToken);
+            this.logger.log(`Successfully logged in to HIS directly for user: ${username}`);
+
+            return savedToken;
+        } catch (error) {
+            this.logger.error(`Failed to login to HIS directly for user: ${username}`, error);
+            throw error;
+        }
+    }
+
     async loginToHIS(username?: string, password?: string, currentUserId?: string): Promise<HisToken> {
         try {
             let hisUsername = username;

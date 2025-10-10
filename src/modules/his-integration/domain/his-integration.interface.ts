@@ -13,6 +13,7 @@ export interface IHisTokenRepository {
 }
 
 export interface IHisIntegrationService {
+    loginToHISDirect(username: string, password: string): Promise<HisToken>;
     loginToHISWithCurrentUser(currentUserId: string, currentUsername?: string): Promise<HisToken>;
     loginToHIS(username?: string, password?: string, currentUserId?: string): Promise<HisToken>;
     renewToken(renewCode: string): Promise<HisToken>;

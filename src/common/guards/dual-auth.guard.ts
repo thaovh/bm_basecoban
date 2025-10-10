@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { HisIntegrationService } from '../../modules/his-integration/application/services/his-integration.service';
 import { IUserRepository } from '../../modules/user/domain/user.interface';
+import { IHisTokenRepository } from '../../modules/his-integration/domain/his-integration.interface';
 
 @Injectable()
 export class DualAuthGuard extends AuthGuard('jwt') {
@@ -13,6 +14,8 @@ export class DualAuthGuard extends AuthGuard('jwt') {
         private readonly hisIntegrationService: HisIntegrationService,
         @Inject('IUserRepository')
         private readonly userRepository: IUserRepository,
+        @Inject('IHisTokenRepository')
+        private readonly hisTokenRepository: IHisTokenRepository,
     ) {
         super();
     }
@@ -51,10 +54,10 @@ export class DualAuthGuard extends AuthGuard('jwt') {
         }
 
         try {
-            // Validate HIS token
-            const hisTokenEntity = await this.hisIntegrationService.getValidToken();
+            // Find HIS token by token code
+            const hisTokenEntity = await this.hisTokenRepository.findByTokenCode(hisToken);
             
-            if (!hisTokenEntity || hisTokenEntity.tokenCode !== hisToken) {
+            if (!hisTokenEntity) {
                 throw new UnauthorizedException('Invalid HIS token');
             }
 

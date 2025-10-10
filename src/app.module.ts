@@ -20,6 +20,9 @@ import { HealthController } from './health.controller';
 import { DualAuthGuard } from './common/guards/dual-auth.guard';
 import { HisIntegrationService } from './modules/his-integration/application/services/his-integration.service';
 import { UserRepository } from './modules/user/infrastructure/database/user.repository';
+import { User } from './modules/user/domain/user.entity';
+import { HisTokenRepository } from './modules/his-integration/infrastructure/database/his-token.repository';
+import { HisToken } from './modules/his-integration/domain/his-token.entity';
 import { GlobalExceptionFilter } from './common/filters/exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
@@ -38,6 +41,9 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
             useFactory: (configService: ConfigService) => typeOrmConfig(configService),
             inject: [ConfigService],
         }),
+
+        // Entities for global providers
+        TypeOrmModule.forFeature([User, HisToken]),
 
         // CQRS
         CqrsModule.forRoot(),
@@ -75,6 +81,10 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         {
             provide: 'IUserRepository',
             useClass: UserRepository,
+        },
+        {
+            provide: 'IHisTokenRepository',
+            useClass: HisTokenRepository,
         },
     ],
 })
