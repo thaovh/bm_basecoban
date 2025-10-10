@@ -5,6 +5,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { Province } from './domain/province.entity';
 import { ProvinceRepository } from './infrastructure/database/province.repository';
 import { ProvinceController } from './province.controller';
+import { HisIntegrationModule } from '../his-integration/his-integration.module';
 
 // Commands
 import { CreateProvinceHandler } from './application/commands/impl/create-province.handler';
@@ -30,6 +31,7 @@ const QueryHandlers = [
     imports: [
         TypeOrmModule.forFeature([Province]),
         CqrsModule,
+        HisIntegrationModule,
     ],
     controllers: [ProvinceController],
     providers: [

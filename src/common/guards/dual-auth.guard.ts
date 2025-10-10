@@ -41,13 +41,48 @@ export class DualAuthGuard extends AuthGuard('jwt') {
             return this.validateHisToken(context);
         }
 
-        // Default to JWT authentication
-        return super.canActivate(context) as Promise<boolean>;
+        // Check token format to determine authentication method
+        const request = context.switchToHttp().getRequest();
+        const token = this.extractTokenFromHeader(request);
+
+        if (this.isHisToken(token)) {
+            // Token looks like HIS token, try HIS authentication
+            try {
+                return await this.validateHisToken(context);
+            } catch (hisError) {
+                this.logger.debug(`HIS token validation failed: ${(hisError as Error).message}`);
+                throw hisError;
+            }
+        } else {
+            // Token looks like JWT, try JWT authentication
+            try {
+                const result = super.canActivate(context);
+                // Handle boolean, Promise, and Observable
+                if (typeof result === 'boolean') {
+                    return result;
+                } else if (result instanceof Promise) {
+                    return await result;
+                } else {
+                    // Observable - convert to Promise
+                    return new Promise((resolve, reject) => {
+                        result.subscribe({
+                            next: (value) => resolve(value),
+                            error: (error) => reject(error)
+                        });
+                    });
+                }
+            } catch (jwtError) {
+                this.logger.debug(`JWT token validation failed: ${(jwtError as Error).message}`);
+                throw jwtError;
+            }
+        }
     }
 
     private async validateHisToken(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
         const hisToken = this.extractHisTokenFromHeader(request);
+
+        this.logger.debug(`Validating HIS token: ${hisToken ? 'present' : 'missing'}`);
 
         if (!hisToken) {
             throw new UnauthorizedException('HIS token is required');
@@ -56,7 +91,7 @@ export class DualAuthGuard extends AuthGuard('jwt') {
         try {
             // Find HIS token by token code
             const hisTokenEntity = await this.hisTokenRepository.findByTokenCode(hisToken);
-            
+
             if (!hisTokenEntity) {
                 throw new UnauthorizedException('Invalid HIS token');
             }
@@ -109,9 +144,26 @@ export class DualAuthGuard extends AuthGuard('jwt') {
         }
     }
 
-    private extractHisTokenFromHeader(request: any): string | undefined {
+    private extractTokenFromHeader(request: any): string | undefined {
         const [type, token] = request.headers.authorization?.split(' ') ?? [];
         return type === 'Bearer' ? token : undefined;
+    }
+
+    private extractHisTokenFromHeader(request: any): string | undefined {
+        return this.extractTokenFromHeader(request);
+    }
+
+    private isHisToken(token: string | undefined): boolean {
+        if (!token) return false;
+
+        // HIS tokens are typically longer and don't contain dots (JWT format)
+        // JWT tokens have 3 parts separated by dots: header.payload.signature
+        const hasDots = token.includes('.');
+        const isLongEnough = token.length > 50; // HIS tokens are usually longer
+
+        // If it has dots, it's likely a JWT
+        // If it's long and has no dots, it's likely a HIS token
+        return !hasDots && isLongEnough;
     }
 
     handleRequest(err: any, user: any, info: any) {

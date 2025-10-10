@@ -11,14 +11,15 @@ import { DeleteProvinceCommand } from './application/commands/delete-province.co
 import { GetProvinceByIdQuery } from './application/queries/get-province-by-id.query';
 import { GetProvincesQuery } from './application/queries/get-provinces.query';
 import { ResponseBuilder, HTTP_STATUS } from '../../common/dtos/base-response.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { DualAuthGuard } from '../../common/guards/dual-auth.guard';
 import { RoleGuard } from '../../common/guards/role.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { HisAuth } from '../../common/decorators/his-auth.decorator';
 
 @ApiTags('Provinces')
 @Controller('api/v1')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth('JWT-auth')
+@UseGuards(DualAuthGuard)
+@ApiBearerAuth()
 export class ProvinceController {
     private readonly logger = new Logger(ProvinceController.name);
 
@@ -28,7 +29,8 @@ export class ProvinceController {
     ) { }
 
     @Get('provinces')
-    @ApiOperation({ summary: 'Get all provinces' })
+    @HisAuth() // Cho phép sử dụng HIS token
+    @ApiOperation({ summary: 'Get all provinces (supports both JWT and HIS token authentication)' })
     @ApiResponse({ status: 200, description: 'Provinces retrieved successfully' })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page' })
     @ApiQuery({ name: 'offset', required: false, type: Number, description: 'Number of items to skip' })
@@ -43,7 +45,8 @@ export class ProvinceController {
     }
 
     @Get('provinces/:id')
-    @ApiOperation({ summary: 'Get province by ID' })
+    @HisAuth() // Cho phép sử dụng HIS token
+    @ApiOperation({ summary: 'Get province by ID (supports both JWT and HIS token authentication)' })
     @ApiResponse({ status: 200, description: 'Province retrieved successfully' })
     @ApiResponse({ status: 404, description: 'Province not found' })
     @ApiParam({ name: 'id', description: 'Province ID' })
