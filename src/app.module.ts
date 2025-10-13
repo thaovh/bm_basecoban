@@ -14,6 +14,7 @@ import { DepartmentTypeModule } from './modules/department-type/department-type.
 import { DepartmentModule } from './modules/department/department.module';
 import { RoomModule } from './modules/room/room.module';
 import { SampleTypeModule } from './modules/sample-type/sample-type.module';
+import { ServiceGroupModule } from './modules/service-group/service-group.module';
 import { HisIntegrationModule } from './modules/his-integration/his-integration.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
@@ -61,6 +62,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         DepartmentModule,
         RoomModule,
         SampleTypeModule,
+        ServiceGroupModule,
         HisIntegrationModule,
     ],
     controllers: [HealthController],

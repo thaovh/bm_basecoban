@@ -38,7 +38,31 @@ export class DualAuthGuard extends AuthGuard('jwt') {
         ]);
 
         if (requiresHisAuth) {
-            return this.validateHisToken(context);
+            // Try HIS token first, fallback to JWT if HIS fails
+            try {
+                return await this.validateHisToken(context);
+            } catch (hisError) {
+                this.logger.debug(`HIS token validation failed, trying JWT: ${(hisError as Error).message}`);
+                // Fallback to JWT authentication
+                try {
+                    const result = super.canActivate(context);
+                    if (typeof result === 'boolean') {
+                        return result;
+                    } else if (result instanceof Promise) {
+                        return await result;
+                    } else {
+                        return new Promise((resolve, reject) => {
+                            result.subscribe({
+                                next: (value) => resolve(value),
+                                error: (error) => reject(error)
+                            });
+                        });
+                    }
+                } catch (jwtError) {
+                    this.logger.debug(`JWT token validation also failed: ${(jwtError as Error).message}`);
+                    throw hisError; // Throw the original HIS error
+                }
+            }
         }
 
         // Check token format to determine authentication method
@@ -159,11 +183,15 @@ export class DualAuthGuard extends AuthGuard('jwt') {
         // HIS tokens are typically longer and don't contain dots (JWT format)
         // JWT tokens have 3 parts separated by dots: header.payload.signature
         const hasDots = token.includes('.');
-        const isLongEnough = token.length > 50; // HIS tokens are usually longer
-
-        // If it has dots, it's likely a JWT
+        
+        // If it has dots, it's definitely a JWT token
+        if (hasDots) {
+            return false;
+        }
+        
         // If it's long and has no dots, it's likely a HIS token
-        return !hasDots && isLongEnough;
+        const isLongEnough = token.length > 50;
+        return isLongEnough;
     }
 
     handleRequest(err: any, user: any, info: any) {
