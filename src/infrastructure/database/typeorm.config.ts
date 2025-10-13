@@ -28,7 +28,7 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
     logging: configService.get('NODE_ENV') === 'development',
     namingStrategy: new BMMNamingStrategy(),
     migrations: ['dist/migrations/*.js'],
-    migrationsRun: true, // Enable migrations
+    migrationsRun: false, // Enable migrations
     extra: {
       // Oracle specific configurations
       connectString: `${configService.get('DATABASE_HOST')}:${configService.get('DATABASE_PORT')}/${configService.get('DATABASE_SERVICE_NAME')}`,

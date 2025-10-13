@@ -1,13 +1,14 @@
-import { Entity, Column, Index } from 'typeorm';
+import { Entity, Column, Index, Unique } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { BaseEntity } from '../../../common/entities/base.entity';
 
 @Entity('BMM_SERVICE_GROUPS')
+@Unique('UK_SVC_GRP_CODE', ['serviceGroupCode'])
 @Index('IDX_BMM_SERVICE_GROUPS_CODE', ['serviceGroupCode'])
 @Index('IDX_BMM_SERVICE_GROUPS_NAME', ['serviceGroupName'])
 @Index('IDX_BMM_SERVICE_GROUPS_SHORT_NAME', ['shortName'])
 export class ServiceGroup extends BaseEntity {
-    @Column({ name: 'SERVICE_GROUP_CODE', type: 'varchar2', length: 50, unique: true })
+    @Column({ name: 'SERVICE_GROUP_CODE', type: 'varchar2', length: 50 })
     @ApiProperty({
         description: 'Service group code (unique identifier)',
         example: 'LAB_001',
