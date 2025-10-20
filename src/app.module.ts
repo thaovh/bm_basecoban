@@ -18,6 +18,8 @@ import { ServiceGroupModule } from './modules/service-group/service-group.module
 import { UnitOfMeasureModule } from './modules/unit-of-measure/unit-of-measure.module';
 import { ServiceModule } from './modules/service/service.module';
 import { HisIntegrationModule } from './modules/his-integration/his-integration.module';
+import { AccessControlModule } from './modules/access-control/access-control.module';
+import { HisServiceRequestModule } from './modules/his-service-request/his-service-request.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
 import { DualAuthGuard } from './common/guards/dual-auth.guard';
@@ -68,6 +70,8 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         UnitOfMeasureModule,
         ServiceModule,
         HisIntegrationModule,
+        AccessControlModule,
+        HisServiceRequestModule,
     ],
     controllers: [HealthController],
     providers: [

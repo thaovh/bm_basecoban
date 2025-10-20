@@ -33,6 +33,8 @@ async function bootstrap() {
     app.enableCors({
         origin: configService.get('CORS_ORIGIN', '*'),
         credentials: configService.get('CORS_CREDENTIALS', true),
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
     });
 
     // Global validation pipe
@@ -88,8 +90,29 @@ async function bootstrap() {
     const host = configService.get('HOST', '0.0.0.0');
     await app.listen(port, host);
 
-    logger.log(`🚀 Application is running on: http://${host}:${port}`);
-    logger.log(`📚 Swagger documentation: http://localhost:${port}/api/docs`);
+    // Get local IP address
+    const os = require('os');
+    const networkInterfaces = os.networkInterfaces();
+    let localIP = 'localhost';
+
+    for (const interfaceName in networkInterfaces) {
+        const interfaces = networkInterfaces[interfaceName];
+        for (const iface of interfaces) {
+            if (iface.family === 'IPv4' && !iface.internal && iface.address.startsWith('192.168.')) {
+                localIP = iface.address;
+                break;
+            }
+        }
+        if (localIP !== 'localhost') break;
+    }
+
+    logger.log(`🚀 Application is running on:`);
+    logger.log(`   - Local: http://localhost:${port}`);
+    logger.log(`   - Network: http://${localIP}:${port}`);
+    logger.log(`   - All interfaces: http://0.0.0.0:${port}`);
+    logger.log(`📚 Swagger documentation:`);
+    logger.log(`   - Local: http://localhost:${port}/api/docs`);
+    logger.log(`   - Network: http://${localIP}:${port}/api/docs`);
     logger.log(`🏥 Bach Mai LIS Management System v${configService.get('APP_VERSION', '1.0.0')}`);
 }
 

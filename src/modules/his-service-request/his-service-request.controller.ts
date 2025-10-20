@@ -1,0 +1,121 @@
+import { Controller, Get, Param, Logger, UseGuards } from '@nestjs/common';
+import { QueryBus } from '@nestjs/cqrs';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+
+import { GetServiceRequestDto } from './application/queries/dto/get-service-request.dto';
+import { GetServiceRequestQuery } from './application/queries/get-service-request.query';
+import { ResponseBuilder, HTTP_STATUS } from '../../common/dtos/base-response.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+
+@ApiTags('HIS Service Request')
+@Controller('api/v1/his/service-requests')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+export class HisServiceRequestController {
+  private readonly logger = new Logger(HisServiceRequestController.name);
+
+  constructor(
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  @Get(':serviceReqCode')
+  @ApiOperation({
+    summary: 'Get service request by code',
+    description: 'Retrieve service request information from HIS database including patient details and services'
+  })
+  @ApiParam({
+    name: 'serviceReqCode',
+    description: 'Service request code',
+    example: '000054090874'
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Service request retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean', example: true },
+        status_code: { type: 'number', example: 200 },
+        data: {
+          type: 'object',
+          properties: {
+            serviceRequest: {
+              type: 'object',
+              properties: {
+                id: { type: 'string', example: '123e4567-e89b-12d3-a456-426614174001' },
+                serviceReqCode: { type: 'string', example: '000054090874' },
+                serviceReqSttCode: { type: 'string', example: 'APPROVED' },
+                serviceReqTypeCode: { type: 'string', example: 'LAB' },
+                instructionTime: { type: 'string', example: '2025-10-15T08:30:00+07:00' },
+                instructionDate: { type: 'string', example: '2025-10-15' },
+                icdCode: { type: 'string', example: 'Z00.00' },
+                icdName: { type: 'string', example: 'General adult medical examination' },
+                treatmentCode: { type: 'string', example: 'TREAT001' },
+                patient: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', example: '789e0123-e89b-12d3-a456-426614174003' },
+                    code: { type: 'string', example: 'P001234' },
+                    name: { type: 'string', example: 'Nguyen Van A' },
+                    dob: { type: 'string', example: '1985-05-15' },
+                    address: { type: 'string', example: '123 Le Loi, Ho Chi Minh City' },
+                    genderName: { type: 'string', example: 'Male' },
+                    careerName: { type: 'string', example: 'Engineer' }
+                  }
+                },
+                services: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      hisSereServId: { type: 'string', example: 'abc12345-e89b-12d3-a456-426614174004' },
+                      serviceId: { type: 'string', example: 'def67890-e89b-12d3-a456-426614174005' },
+                      serviceCode: { type: 'string', example: 'LAB001' },
+                      serviceName: { type: 'string', example: 'Complete Blood Count' },
+                      price: { type: 'number', example: 150000 }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            timestamp: { type: 'string', example: '2025-10-15T10:30:00.000Z' },
+            totalServices: { type: 'number', example: 2 }
+          }
+        }
+      }
+    }
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Service request not found',
+    schema: {
+      type: 'object',
+      properties: {
+        success: { type: 'boolean', example: false },
+        status_code: { type: 'number', example: 404 },
+        error: {
+          type: 'object',
+          properties: {
+            code: { type: 'string', example: 'SERVICE_REQUEST_NOT_FOUND' },
+            message: { type: 'string', example: 'Service request not found' },
+            name: { type: 'string', example: 'AppError' }
+          }
+        }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  async getServiceRequest(@Param() params: GetServiceRequestDto) {
+    this.logger.log(`Getting service request for code: ${params.serviceReqCode}`);
+
+    const result = await this.queryBus.execute(new GetServiceRequestQuery(params));
+
+    return ResponseBuilder.success(result, HTTP_STATUS.OK);
+  }
+}
