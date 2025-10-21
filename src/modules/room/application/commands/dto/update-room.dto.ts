@@ -38,4 +38,10 @@ export class UpdateRoomDto {
     @ApiProperty({ description: 'Is room active', example: true, required: false })
     @IsOptional()
     isActive?: boolean;
+
+    @ApiProperty({ description: 'Mapping information (JSON string)', example: '{"hisCode": "ROOM001", "externalSystem": "HIS"}', required: false })
+    @IsOptional()
+    @IsString()
+    @MaxLength(500)
+    mapping?: string;
 }

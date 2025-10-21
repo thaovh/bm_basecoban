@@ -5,11 +5,12 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@ne
 import { GetServiceRequestDto } from './application/queries/dto/get-service-request.dto';
 import { GetServiceRequestQuery } from './application/queries/get-service-request.query';
 import { ResponseBuilder, HTTP_STATUS } from '../../common/dtos/base-response.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { DualAuthGuard } from '../../common/guards/dual-auth.guard';
+import { HisAuth } from '../../common/decorators/his-auth.decorator';
 
 @ApiTags('HIS Service Request')
 @Controller('api/v1/his/service-requests')
-@UseGuards(JwtAuthGuard)
+@UseGuards(DualAuthGuard)
 @ApiBearerAuth()
 export class HisServiceRequestController {
   private readonly logger = new Logger(HisServiceRequestController.name);
@@ -19,8 +20,9 @@ export class HisServiceRequestController {
   ) { }
 
   @Get(':serviceReqCode')
+  @HisAuth() // Cho phép sử dụng HIS token
   @ApiOperation({
-    summary: 'Get service request by code',
+    summary: 'Get service request by code (supports both JWT and HIS token authentication)',
     description: 'Retrieve service request information from HIS database including patient details and services'
   })
   @ApiParam({
@@ -91,6 +93,9 @@ export class HisServiceRequestController {
                     code: { type: 'string', example: 'P001234' },
                     name: { type: 'string', example: 'Nguyen Van A' },
                     dob: { type: 'string', example: '1985-05-15' },
+                    cmndNumber: { type: 'string', example: '123456789' },
+                    cmndDate: { type: 'string', example: '2020-01-15' },
+                    cmndPlace: { type: 'string', example: 'CA HCM' },
                     provinceCode: { type: 'string', example: '79' },
                     provinceName: { type: 'string', example: 'Ho Chi Minh City' },
                     communeCode: { type: 'string', example: '26734' },

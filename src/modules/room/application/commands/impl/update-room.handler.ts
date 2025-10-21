@@ -59,6 +59,9 @@ export class UpdateRoomHandler implements ICommandHandler<UpdateRoomCommand> {
         if (updateRoomDto.isActive !== undefined) {
             existingRoom.isActiveFlag = updateRoomDto.isActive ? 1 : 0;
         }
+        if (updateRoomDto.mapping !== undefined) {
+            existingRoom.mapping = updateRoomDto.mapping;
+        }
         existingRoom.updatedBy = 'system';
 
         const updatedRoom = await this.roomRepository.save(existingRoom);

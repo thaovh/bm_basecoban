@@ -51,6 +51,10 @@ export class Department extends BaseEntity {
     @ApiProperty({ description: 'Is department active', example: true })
     isActiveFlag: number;
 
+    @Column({ name: 'MAPPING', type: 'varchar2', length: 500, nullable: true })
+    @ApiProperty({ description: 'Mapping information (JSON string)', example: '{"hisCode": "DEPT001", "externalSystem": "HIS"}', required: false })
+    mapping?: string;
+
     // Relationships
     @ManyToOne(() => Branch)
     @JoinColumn({ name: 'BRANCH_ID', foreignKeyConstraintName: 'FK_DEPT_BRANCH' })

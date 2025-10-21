@@ -37,6 +37,10 @@ export class Room extends BaseEntity {
     @ApiProperty({ description: 'Is room active', example: true })
     isActiveFlag: number;
 
+    @Column({ name: 'MAPPING', type: 'varchar2', length: 500, nullable: true })
+    @ApiProperty({ description: 'Mapping information (JSON string)', example: '{"hisCode": "ROOM001", "externalSystem": "HIS"}', required: false })
+    mapping?: string;
+
     // Relationships
     @ManyToOne(() => Department)
     @JoinColumn({ name: 'DEPARTMENT_ID', foreignKeyConstraintName: 'FK_ROOM_DEPT' })

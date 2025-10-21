@@ -38,6 +38,7 @@ export class CreateRoomHandler implements ICommandHandler<CreateRoomCommand> {
         room.departmentId = createRoomDto.departmentId;
         room.description = createRoomDto.description;
         room.isActiveFlag = createRoomDto.isActive ? 1 : 1; // Default to active
+        room.mapping = createRoomDto.mapping;
         room.createdBy = 'system';
 
         const savedRoom = await this.roomRepository.save(room);

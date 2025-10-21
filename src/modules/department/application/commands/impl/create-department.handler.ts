@@ -41,6 +41,7 @@ export class CreateDepartmentHandler implements ICommandHandler<CreateDepartment
         department.shortName = createDepartmentDto.shortName;
         department.departmentTypeId = createDepartmentDto.departmentTypeId;
         department.isActiveFlag = createDepartmentDto.isActive ? 1 : 1; // Default to active
+        department.mapping = createDepartmentDto.mapping;
         department.createdBy = 'system';
 
         const savedDepartment = await this.departmentRepository.save(department);

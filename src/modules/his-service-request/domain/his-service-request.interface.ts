@@ -32,6 +32,9 @@ export interface PatientInfo {
   code: string;
   name: string;
   dob: string;
+  cmndNumber?: string;
+  cmndDate?: string;
+  cmndPlace?: string;
   provinceCode?: string;
   provinceName?: string;
   communeCode?: string;

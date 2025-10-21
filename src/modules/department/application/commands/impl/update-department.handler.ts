@@ -68,6 +68,9 @@ export class UpdateDepartmentHandler implements ICommandHandler<UpdateDepartment
         if (updateDepartmentDto.isActive !== undefined) {
             existingDepartment.isActiveFlag = updateDepartmentDto.isActive ? 1 : 0;
         }
+        if (updateDepartmentDto.mapping !== undefined) {
+            existingDepartment.mapping = updateDepartmentDto.mapping;
+        }
         existingDepartment.updatedBy = 'system';
 
         const updatedDepartment = await this.departmentRepository.save(existingDepartment);

@@ -49,4 +49,10 @@ export class CreateDepartmentDto {
     @ApiProperty({ description: 'Is department active', example: true, required: false })
     @IsOptional()
     isActive?: boolean;
+
+    @ApiProperty({ description: 'Mapping information (JSON string)', example: '{"hisCode": "DEPT001", "externalSystem": "HIS"}', required: false })
+    @IsOptional()
+    @IsString()
+    @MaxLength(500)
+    mapping?: string;
 }
