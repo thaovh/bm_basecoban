@@ -20,6 +20,7 @@ import { ServiceModule } from './modules/service/service.module';
 import { HisIntegrationModule } from './modules/his-integration/his-integration.module';
 import { AccessControlModule } from './modules/access-control/access-control.module';
 import { HisServiceRequestModule } from './modules/his-service-request/his-service-request.module';
+import { ServiceTestModule } from './modules/service-test/service-test.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
 import { DualAuthGuard } from './common/guards/dual-auth.guard';
@@ -72,6 +73,7 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         HisIntegrationModule,
         AccessControlModule,
         HisServiceRequestModule,
+      ServiceTestModule,
     ],
     controllers: [HealthController],
     providers: [

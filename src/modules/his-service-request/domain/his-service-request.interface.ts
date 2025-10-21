@@ -36,9 +36,38 @@ export interface PatientInfo {
 export interface ServiceInfo {
   hisSereServId: string;
   serviceId: string;
-  serviceCode: string;
+  serviceCode: string; // HIS service code
   serviceName: string;
   price: number;
+  lisService?: LisServiceInfo; // LIS service information if mapped
+}
+
+export interface LisServiceInfo {
+  id: string;
+  serviceCode: string; // LIS service code
+  serviceName: string;
+  shortName: string;
+  currentPrice?: number;
+  serviceGroupId?: string;
+  serviceGroupName?: string;
+  unitOfMeasureId?: string;
+  unitOfMeasureName?: string;
+  serviceTests?: ServiceTestInfo[]; // Service tests for this service
+}
+
+export interface ServiceTestInfo {
+  id: string;
+  testCode: string;
+  testName: string;
+  shortName: string;
+  unitOfMeasureId?: string;
+  unitOfMeasureName?: string;
+  rangeText?: string;
+  rangeLow?: number;
+  rangeHigh?: number;
+  mapping?: string;
+  testOrder?: number;
+  isActiveFlag: number;
 }
 
 // Query Parameters

@@ -16,7 +16,7 @@ export class HisServiceRequestController {
 
   constructor(
     private readonly queryBus: QueryBus,
-  ) {}
+  ) { }
 
   @Get(':serviceReqCode')
   @ApiOperation({
@@ -70,9 +70,43 @@ export class HisServiceRequestController {
                     properties: {
                       hisSereServId: { type: 'string', example: 'abc12345-e89b-12d3-a456-426614174004' },
                       serviceId: { type: 'string', example: 'def67890-e89b-12d3-a456-426614174005' },
-                      serviceCode: { type: 'string', example: 'LAB001' },
-                      serviceName: { type: 'string', example: 'Complete Blood Count' },
-                      price: { type: 'number', example: 150000 }
+                      serviceCode: { type: 'string', example: 'BM00132' },
+                      serviceName: { type: 'string', example: 'Điện giải đồ (Na, K, Cl)' },
+                      price: { type: 'number', example: 30200 },
+                      lisService: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string', example: 'uuid-lis-service-id' },
+                          serviceCode: { type: 'string', example: 'LAB_001' },
+                          serviceName: { type: 'string', example: 'Xét nghiệm máu tổng quát' },
+                          shortName: { type: 'string', example: 'XN Máu TQ' },
+                          currentPrice: { type: 'number', example: 150000 },
+                          serviceGroupId: { type: 'string', example: 'uuid-service-group-id' },
+                          serviceGroupName: { type: 'string', example: 'Laboratory Services' },
+                          unitOfMeasureId: { type: 'string', example: 'uuid-unit-of-measure-id' },
+                          unitOfMeasureName: { type: 'string', example: 'Lần' },
+                          serviceTests: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                id: { type: 'string', example: 'uuid-service-test-id' },
+                                testCode: { type: 'string', example: 'TEST_001' },
+                                testName: { type: 'string', example: 'Xét nghiệm đường huyết' },
+                                shortName: { type: 'string', example: 'XN Đường huyết' },
+                                unitOfMeasureId: { type: 'string', example: 'uuid-unit-of-measure-id' },
+                                unitOfMeasureName: { type: 'string', example: 'mg/dL' },
+                                rangeText: { type: 'string', example: 'Bình thường: 70-100 mg/dL' },
+                                rangeLow: { type: 'number', example: 70 },
+                                rangeHigh: { type: 'number', example: 100 },
+                                mapping: { type: 'string', example: '{"hisCode": "GLUCOSE"}' },
+                                testOrder: { type: 'number', example: 1 },
+                                isActiveFlag: { type: 'number', example: 1 }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }

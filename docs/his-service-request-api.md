@@ -15,7 +15,7 @@ The HIS Service Request API provides access to service request information from 
 
 **Endpoint**: `GET /api/v1/his/service-requests/:serviceReqCode`
 
-**Description**: Retrieve service request information from HIS database including patient details and services.
+**Description**: Retrieve service request information from HIS database including patient details and services. Each service includes both HIS information and mapped LIS service information when available.
 
 #### Path Parameters
 
@@ -70,7 +70,48 @@ curl -X GET "http://192.168.68.209:3333/api/v1/his/service-requests/000054090874
           "serviceId": "def67890-e89b-12d3-a456-426614174005",
           "serviceCode": "LAB001",
           "serviceName": "Complete Blood Count",
-          "price": 150000
+          "price": 150000,
+          "lisService": {
+            "id": "uuid-lis-service-id",
+            "serviceCode": "LAB_001",
+            "serviceName": "Xét nghiệm máu tổng quát",
+            "shortName": "XN Máu TQ",
+            "currentPrice": 150000,
+            "serviceGroupId": "uuid-service-group-id",
+            "serviceGroupName": "Laboratory Services",
+            "unitOfMeasureId": "uuid-unit-of-measure-id",
+            "unitOfMeasureName": "Lần",
+            "serviceTests": [
+              {
+                "id": "uuid-service-test-id-1",
+                "testCode": "TEST_001",
+                "testName": "Xét nghiệm đường huyết",
+                "shortName": "XN Đường huyết",
+                "unitOfMeasureId": "uuid-unit-of-measure-id",
+                "unitOfMeasureName": "mg/dL",
+                "rangeText": "Bình thường: 70-100 mg/dL",
+                "rangeLow": 70,
+                "rangeHigh": 100,
+                "mapping": "{\"hisCode\": \"GLUCOSE\"}",
+                "testOrder": 1,
+                "isActiveFlag": 1
+              },
+              {
+                "id": "uuid-service-test-id-2",
+                "testCode": "TEST_002",
+                "testName": "Xét nghiệm cholesterol",
+                "shortName": "XN Cholesterol",
+                "unitOfMeasureId": "uuid-unit-of-measure-id",
+                "unitOfMeasureName": "mg/dL",
+                "rangeText": "Bình thường: <200 mg/dL",
+                "rangeLow": 0,
+                "rangeHigh": 200,
+                "mapping": "{\"hisCode\": \"CHOLESTEROL\"}",
+                "testOrder": 2,
+                "isActiveFlag": 1
+              }
+            ]
+          }
         },
         {
           "hisSereServId": "ghi90123-e89b-12d3-a456-426614174006",
@@ -123,9 +164,44 @@ curl -X GET "http://192.168.68.209:3333/api/v1/his/service-requests/000054090874
 |-------|------|-------------|---------|
 | `hisSereServId` | string | HIS service ID | `abc12345-e89b-12d3-a456-426614174004` |
 | `serviceId` | string | Service ID | `def67890-e89b-12d3-a456-426614174005` |
-| `serviceCode` | string | Service code | `LAB001` |
-| `serviceName` | string | Service name | `Complete Blood Count` |
-| `price` | number | Service price | `150000` |
+| `serviceCode` | string | HIS service code | `BM00132` |
+| `serviceName` | string | HIS service name | `Điện giải đồ (Na, K, Cl)` |
+| `price` | number | HIS service price | `30200` |
+| `lisService` | object | LIS service information (if mapped) | See LIS Service Object below |
+
+#### LIS Service Object (when mapped)
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | LIS service ID | `uuid-lis-service-id` |
+| `serviceCode` | string | LIS service code | `LAB_001` |
+| `serviceName` | string | LIS service name | `Xét nghiệm máu tổng quát` |
+| `shortName` | string | LIS service short name | `XN Máu TQ` |
+| `currentPrice` | number | LIS service current price | `150000` |
+| `serviceGroupId` | string | LIS service group ID | `uuid-service-group-id` |
+| `serviceGroupName` | string | LIS service group name | `Laboratory Services` |
+| `unitOfMeasureId` | string | LIS unit of measure ID | `uuid-unit-of-measure-id` |
+| `unitOfMeasureName` | string | LIS unit of measure name | `Lần` |
+| `serviceTests` | array | Service tests for this service | See Service Test Object below |
+
+#### Service Test Object (when available)
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | Service test ID | `uuid-service-test-id` |
+| `testCode` | string | Test code | `TEST_001` |
+| `testName` | string | Test name | `Xét nghiệm đường huyết` |
+| `shortName` | string | Test short name | `XN Đường huyết` |
+| `unitOfMeasureId` | string | Unit of measure ID | `uuid-unit-of-measure-id` |
+| `unitOfMeasureName` | string | Unit of measure name | `mg/dL` |
+| `rangeText` | string | Range description | `Bình thường: 70-100 mg/dL` |
+| `rangeLow` | number | Low range value | `70` |
+| `rangeHigh` | number | High range value | `100` |
+| `mapping` | string | Mapping information (JSON) | `{"hisCode": "GLUCOSE"}` |
+| `testOrder` | number | Display order | `1` |
+| `isActiveFlag` | number | Active status | `1` |
+
+**Note**: The `lisService` field contains the complete LIS service information when a mapping exists between HIS and LIS services. This mapping is based on the `mapping` field in LIS services that contains the HIS service code. Each LIS service can have multiple `serviceTests` that represent the specific laboratory tests available for that service.
 
 **Error Response (404)**:
 ```json
@@ -189,6 +265,9 @@ HIS_DATABASE_SID=orclstb
 3. **Input Validation**: All parameters are validated using class-validator
 4. **Error Handling**: Comprehensive error handling with structured responses
 5. **Database Isolation**: Separate connection to HIS database
+6. **Service Mapping**: Automatic mapping between HIS and LIS services based on mapping configuration
+7. **Service Tests Integration**: Automatic inclusion of service tests for each mapped LIS service
+8. **Dual Database Access**: Secure access to both HIS and LIS databases for comprehensive service information
 
 ## 📊 Response Format
 
