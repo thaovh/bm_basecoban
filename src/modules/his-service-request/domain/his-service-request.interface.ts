@@ -18,6 +18,11 @@ export interface ServiceRequestInfo {
   icdText: string;
   treatmentId: string;
   treatmentCode: string;
+  note?: string;
+  requestRoom?: RoomInfo;
+  requestDepartment?: DepartmentInfo;
+  executeRoom?: RoomInfo;
+  executeDepartment?: DepartmentInfo;
   patient: PatientInfo;
   services: ServiceInfo[];
 }
@@ -27,10 +32,26 @@ export interface PatientInfo {
   code: string;
   name: string;
   dob: string;
+  provinceCode?: string;
+  provinceName?: string;
+  communeCode?: string;
+  communeName?: string;
   address: string;
   genderId: string;
   genderName: string;
   careerName: string;
+}
+
+export interface RoomInfo {
+  id: string;
+  code: string;
+  name: string;
+}
+
+export interface DepartmentInfo {
+  id: string;
+  code: string;
+  name: string;
 }
 
 export interface ServiceInfo {

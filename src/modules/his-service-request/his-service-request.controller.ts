@@ -51,6 +51,39 @@ export class HisServiceRequestController {
                 icdCode: { type: 'string', example: 'Z00.00' },
                 icdName: { type: 'string', example: 'General adult medical examination' },
                 treatmentCode: { type: 'string', example: 'TREAT001' },
+                note: { type: 'string', example: 'Patient requires special attention' },
+                requestRoom: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', example: 'room-uuid-123' },
+                    code: { type: 'string', example: 'R001' },
+                    name: { type: 'string', example: 'Room 101' }
+                  }
+                },
+                requestDepartment: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', example: 'dept-uuid-123' },
+                    code: { type: 'string', example: 'DEPT001' },
+                    name: { type: 'string', example: 'Internal Medicine' }
+                  }
+                },
+                executeRoom: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', example: 'room-uuid-456' },
+                    code: { type: 'string', example: 'R002' },
+                    name: { type: 'string', example: 'Lab Room 201' }
+                  }
+                },
+                executeDepartment: {
+                  type: 'object',
+                  properties: {
+                    id: { type: 'string', example: 'dept-uuid-456' },
+                    code: { type: 'string', example: 'DEPT002' },
+                    name: { type: 'string', example: 'Laboratory' }
+                  }
+                },
                 patient: {
                   type: 'object',
                   properties: {
@@ -58,6 +91,10 @@ export class HisServiceRequestController {
                     code: { type: 'string', example: 'P001234' },
                     name: { type: 'string', example: 'Nguyen Van A' },
                     dob: { type: 'string', example: '1985-05-15' },
+                    provinceCode: { type: 'string', example: '79' },
+                    provinceName: { type: 'string', example: 'Ho Chi Minh City' },
+                    communeCode: { type: 'string', example: '26734' },
+                    communeName: { type: 'string', example: 'Ward 1' },
                     address: { type: 'string', example: '123 Le Loi, Ho Chi Minh City' },
                     genderName: { type: 'string', example: 'Male' },
                     careerName: { type: 'string', example: 'Engineer' }
