@@ -1,7 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { IHisServiceRequestRepository, ServiceRequestInfo, PatientInfo, ServiceInfo, LisServiceInfo, ServiceTestInfo } from '../../domain/his-service-request.interface';
+import { IProvinceRepository } from '../../../province/domain/province.interface';
+import { IWardRepository } from '../../../ward/domain/ward.interface';
 
 @Injectable()
 export class HisServiceRequestRepository implements IHisServiceRequestRepository {
@@ -12,6 +14,10 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
     private readonly hisDataSource: DataSource,
     @InjectDataSource('default')
     private readonly lisDataSource: DataSource,
+    @Inject('IProvinceRepository')
+    private readonly provinceRepository: IProvinceRepository,
+    @Inject('IWardRepository')
+    private readonly wardRepository: IWardRepository,
   ) { }
 
   async getServiceRequestByCode(serviceReqCode: string): Promise<ServiceRequestInfo | null> {
@@ -86,6 +92,31 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
 
       // Group results by service request
       const firstRow = results[0];
+      
+      // Lookup Province ID từ provinceCode
+      let provinceId: string | undefined;
+      if (firstRow.PATIENT_PROVINCE_CODE) {
+        try {
+          const province = await this.provinceRepository.findByCode(firstRow.PATIENT_PROVINCE_CODE);
+          provinceId = province?.id;
+          this.logger.debug(`Found province ID: ${provinceId} for code: ${firstRow.PATIENT_PROVINCE_CODE}`);
+        } catch (error) {
+          this.logger.warn(`Could not find province with code: ${firstRow.PATIENT_PROVINCE_CODE}`, error);
+        }
+      }
+
+      // Lookup Ward ID từ communeCode  
+      let wardId: string | undefined;
+      if (firstRow.PATIENT_COMMUNE_CODE) {
+        try {
+          const ward = await this.wardRepository.findByCode(firstRow.PATIENT_COMMUNE_CODE);
+          wardId = ward?.id;
+          this.logger.debug(`Found ward ID: ${wardId} for code: ${firstRow.PATIENT_COMMUNE_CODE}`);
+        } catch (error) {
+          this.logger.warn(`Could not find ward with code: ${firstRow.PATIENT_COMMUNE_CODE}`, error);
+        }
+      }
+
       const serviceRequest: ServiceRequestInfo = {
         id: firstRow.ID,
         serviceReqCode: firstRow.SERVICE_REQ_CODE,
@@ -132,8 +163,10 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
           cmndPlace: firstRow.PATIENT_CCCD_PLACE,
           mobile: firstRow.PATIENT_MOBILE,
           phone: firstRow.PATIENT_PHONE,
+          provinceId,
           provinceCode: firstRow.PATIENT_PROVINCE_CODE,
           provinceName: firstRow.PATIENT_PROVINCE_NAME,
+          wardId,
           communeCode: firstRow.PATIENT_COMMUNE_CODE,
           communeName: firstRow.PATIENT_COMMUNE_NAME,
           address: firstRow.PATIENT_ADDRESS,
