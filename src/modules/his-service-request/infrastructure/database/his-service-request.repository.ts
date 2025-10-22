@@ -92,28 +92,30 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
 
       // Group results by service request
       const firstRow = results[0];
-      
+
       // Lookup Province ID từ provinceCode
-      let provinceId: string | undefined;
+      let provinceId: string | null = null;
       if (firstRow.PATIENT_PROVINCE_CODE) {
         try {
           const province = await this.provinceRepository.findByCode(firstRow.PATIENT_PROVINCE_CODE);
-          provinceId = province?.id;
+          provinceId = province?.id || null;
           this.logger.debug(`Found province ID: ${provinceId} for code: ${firstRow.PATIENT_PROVINCE_CODE}`);
         } catch (error) {
           this.logger.warn(`Could not find province with code: ${firstRow.PATIENT_PROVINCE_CODE}`, error);
+          provinceId = null;
         }
       }
 
       // Lookup Ward ID từ communeCode  
-      let wardId: string | undefined;
+      let wardId: string | null = null;
       if (firstRow.PATIENT_COMMUNE_CODE) {
         try {
           const ward = await this.wardRepository.findByCode(firstRow.PATIENT_COMMUNE_CODE);
-          wardId = ward?.id;
+          wardId = ward?.id || null;
           this.logger.debug(`Found ward ID: ${wardId} for code: ${firstRow.PATIENT_COMMUNE_CODE}`);
         } catch (error) {
           this.logger.warn(`Could not find ward with code: ${firstRow.PATIENT_COMMUNE_CODE}`, error);
+          wardId = null;
         }
       }
 
