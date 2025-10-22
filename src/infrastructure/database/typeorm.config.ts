@@ -24,7 +24,7 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
     password: configService.get('DATABASE_PASSWORD', 'LIS_RS'),
     serviceName: configService.get('DATABASE_SERVICE_NAME', 'orclstb'),
     entities: [__dirname + '/../../modules/**/domain/*.entity{.ts,.js}'],
-    synchronize: false, // Disable to use migrations instead
+    synchronize: false, // Enable to use migrations instead
     logging: configService.get('NODE_ENV') === 'development',
     namingStrategy: new BMMNamingStrategy(),
     migrations: ['dist/migrations/*.js'],

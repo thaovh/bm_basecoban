@@ -22,6 +22,9 @@ import { AccessControlModule } from './modules/access-control/access-control.mod
 import { HisServiceRequestModule } from './modules/his-service-request/his-service-request.module';
 import { ServiceTestModule } from './modules/service-test/service-test.module';
 import { PatientModule } from './modules/patient/patient.module';
+import { ServiceRequestModule } from './modules/service-request/service-request.module';
+import { ResultStatusModule } from './modules/result-status/result-status.module';
+import { ResultTrackingModule } from './modules/result-tracking/result-tracking.module';
 import { typeOrmConfig } from './infrastructure/database/typeorm.config';
 import { HealthController } from './health.controller';
 import { DualAuthGuard } from './common/guards/dual-auth.guard';
@@ -76,6 +79,9 @@ import { RequestIdMiddleware } from './common/middleware/request-id.middleware';
         HisServiceRequestModule,
         ServiceTestModule,
         PatientModule,
+        ServiceRequestModule,
+        ResultStatusModule,
+        ResultTrackingModule,
     ],
     controllers: [HealthController],
     providers: [
