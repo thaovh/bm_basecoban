@@ -35,6 +35,8 @@ export interface PatientInfo {
   cmndNumber?: string;
   cmndDate?: string;
   cmndPlace?: string;
+  mobile?: string;
+  phone?: string;
   provinceCode?: string;
   provinceName?: string;
   communeCode?: string;

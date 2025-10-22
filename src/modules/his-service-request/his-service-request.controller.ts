@@ -96,6 +96,8 @@ export class HisServiceRequestController {
                     cmndNumber: { type: 'string', example: '123456789' },
                     cmndDate: { type: 'string', example: '2020-01-15' },
                     cmndPlace: { type: 'string', example: 'CA HCM' },
+                    mobile: { type: 'string', example: '0901234567' },
+                    phone: { type: 'string', example: '0281234567' },
                     provinceCode: { type: 'string', example: '79' },
                     provinceName: { type: 'string', example: 'Ho Chi Minh City' },
                     communeCode: { type: 'string', example: '26734' },

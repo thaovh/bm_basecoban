@@ -41,6 +41,8 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
           HSR.TDL_PATIENT_CCCD_NUMBER PATIENT_CMND_NUMBER,
           HSR.TDL_PATIENT_CCCD_DATE PATIENT_CCCD_DATE,
           HSR.TDL_PATIENT_CCCD_PLACE PATIENT_CCCD_PLACE,
+          B.TDL_PATIENT_RELATIVE_MOBILE PATIENT_MOBILE,
+          B.TDL_PATIENT_RELATIVE_PHONE PATIENT_PHONE,
           HSR.TDL_PATIENT_PROVINCE_CODE PATIENT_PROVINCE_CODE,
           HSR.TDL_PATIENT_PROVINCE_NAME PATIENT_PROVINCE_NAME,
           HSR.TDL_PATIENT_COMMUNE_CODE PATIENT_COMMUNE_CODE,
@@ -70,6 +72,7 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
         FROM
           V_HIS_SERVICE_REQ HSR
           LEFT JOIN HIS_SERE_SERV A ON HSR.ID = A.SERVICE_REQ_ID
+          LEFT JOIN HIS_TREATMENT B ON HSR.TREATMENT_ID = B.ID
         WHERE
           HSR.SERVICE_REQ_CODE = :serviceReqCode
       `;
@@ -127,6 +130,8 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
           cmndNumber: firstRow.PATIENT_CMND_NUMBER,
           cmndDate: firstRow.PATIENT_CCCD_DATE,
           cmndPlace: firstRow.PATIENT_CCCD_PLACE,
+          mobile: firstRow.PATIENT_MOBILE,
+          phone: firstRow.PATIENT_PHONE,
           provinceCode: firstRow.PATIENT_PROVINCE_CODE,
           provinceName: firstRow.PATIENT_PROVINCE_NAME,
           communeCode: firstRow.PATIENT_COMMUNE_CODE,
