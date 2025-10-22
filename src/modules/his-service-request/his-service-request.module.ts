@@ -10,6 +10,7 @@ import { hisTypeOrmConfig } from '../../infrastructure/database/his-typeorm.conf
 import { HisIntegrationModule } from '../his-integration/his-integration.module';
 import { ProvinceModule } from '../province/province.module';
 import { WardModule } from '../ward/ward.module';
+import { PatientModule } from '../patient/patient.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { WardModule } from '../ward/ward.module';
     HisIntegrationModule, // Added to resolve DualAuthGuard dependency
     ProvinceModule, // Added for province lookup
     WardModule, // Added for ward lookup
+    PatientModule, // Added for LIS patient lookup
     TypeOrmModule.forRootAsync({
       name: 'his',
       imports: [ConfigModule],

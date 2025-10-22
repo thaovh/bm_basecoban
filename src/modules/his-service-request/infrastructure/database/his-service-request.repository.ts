@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { IHisServiceRequestRepository, ServiceRequestInfo, PatientInfo, ServiceInfo, LisServiceInfo, ServiceTestInfo } from '../../domain/his-service-request.interface';
 import { IProvinceRepository } from '../../../province/domain/province.interface';
 import { IWardRepository } from '../../../ward/domain/ward.interface';
+import { IPatientRepository } from '../../../patient/domain/patient.interface';
 
 @Injectable()
 export class HisServiceRequestRepository implements IHisServiceRequestRepository {
@@ -18,6 +19,8 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
     private readonly provinceRepository: IProvinceRepository,
     @Inject('IWardRepository')
     private readonly wardRepository: IWardRepository,
+    @Inject('IPatientRepository')
+    private readonly patientRepository: IPatientRepository,
   ) { }
 
   async getServiceRequestByCode(serviceReqCode: string): Promise<ServiceRequestInfo | null> {
@@ -119,6 +122,19 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
         }
       }
 
+      // Lookup LIS Patient ID từ patientCode
+      let lisPatientId: string | null = null;
+      if (firstRow.PATIENT_CODE) {
+        try {
+          const lisPatient = await this.patientRepository.findByCode(firstRow.PATIENT_CODE);
+          lisPatientId = lisPatient?.id || null;
+          this.logger.debug(`Found LIS Patient ID: ${lisPatientId} for code: ${firstRow.PATIENT_CODE}`);
+        } catch (error) {
+          this.logger.warn(`Could not find LIS patient with code: ${firstRow.PATIENT_CODE}`, error);
+          lisPatientId = null;
+        }
+      }
+
       const serviceRequest: ServiceRequestInfo = {
         id: firstRow.ID,
         serviceReqCode: firstRow.SERVICE_REQ_CODE,
@@ -175,6 +191,7 @@ export class HisServiceRequestRepository implements IHisServiceRequestRepository
           genderId: firstRow.PATIENT_GENDER_ID,
           genderName: firstRow.PATIENT_GENDER_NAME,
           careerName: firstRow.PATIENT_CAREER_NAME,
+          lisPatientId,
         },
         services: [],
       };

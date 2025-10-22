@@ -47,6 +47,7 @@ export interface PatientInfo {
   genderId: string;
   genderName: string;
   careerName: string;
+  lisPatientId?: string | null; // LIS Patient ID from BMM_PATIENTS table
 }
 
 export interface RoomInfo {

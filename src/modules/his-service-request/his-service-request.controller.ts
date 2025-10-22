@@ -106,7 +106,8 @@ export class HisServiceRequestController {
                     communeName: { type: 'string', example: 'Ward 1' },
                     address: { type: 'string', example: '123 Le Loi, Ho Chi Minh City' },
                     genderName: { type: 'string', example: 'Male' },
-                    careerName: { type: 'string', example: 'Engineer' }
+                    careerName: { type: 'string', example: 'Engineer' },
+                    lisPatientId: { type: 'string', example: 'lis-patient-uuid-123', nullable: true }
                   }
                 },
                 services: {
