@@ -37,6 +37,12 @@ async function bootstrap() {
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
     });
 
+    // Set charset for UTF-8 support
+    app.use((req, res, next) => {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        next();
+    });
+
     // Global validation pipe
     app.useGlobalPipes(
         new ValidationPipe({

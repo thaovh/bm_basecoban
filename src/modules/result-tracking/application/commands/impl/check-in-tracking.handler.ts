@@ -38,7 +38,9 @@ export class CheckInTrackingHandler implements ICommandHandler<CheckInTrackingCo
             resultTracking.sampleTypeId = command.checkInTrackingDto.sampleTypeId;
             resultTracking.sampleCode = command.checkInTrackingDto.sampleCode;
             resultTracking.note = command.checkInTrackingDto.note;
-            resultTracking.inTrackingTime = new Date(); // Set current time for check-in
+            resultTracking.inTrackingTime = command.checkInTrackingDto.inTrackingTime
+                ? new Date(command.checkInTrackingDto.inTrackingTime)
+                : new Date(); // Use provided time or current time
 
             const savedResultTracking = await this.resultTrackingRepository.save(resultTracking);
 

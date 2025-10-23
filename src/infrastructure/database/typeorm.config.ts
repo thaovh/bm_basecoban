@@ -32,6 +32,17 @@ export const typeOrmConfig = (configService: ConfigService): TypeOrmModuleOption
     extra: {
       // Oracle specific configurations
       connectString: `${configService.get('DATABASE_HOST')}:${configService.get('DATABASE_PORT')}/${configService.get('DATABASE_SERVICE_NAME')}`,
+      // Oracle charset configuration for UTF-8 support
+      charset: 'UTF8',
+      // Oracle NLS configuration for Vietnamese characters
+      nls_lang: 'AMERICAN_AMERICA.UTF8',
+      // Additional Oracle configuration for UTF-8
+      encoding: 'UTF8',
+      // Oracle connection options
+      options: {
+        charset: 'UTF8',
+        nls_lang: 'AMERICAN_AMERICA.UTF8',
+      },
     },
   };
 };

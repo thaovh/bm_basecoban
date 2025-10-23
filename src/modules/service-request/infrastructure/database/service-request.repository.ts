@@ -17,7 +17,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findOne({
                 where: { id, deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
             });
         } catch (error) {
             this.logger.error(`Error finding service request by ID: ${id}`, error);
@@ -29,7 +29,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findOne({
                 where: { serviceReqCode, deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
             });
         } catch (error) {
             this.logger.error(`Error finding service request by code: ${serviceReqCode}`, error);
@@ -41,7 +41,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findOne({
                 where: { hisServiceReqId, deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
             });
         } catch (error) {
             this.logger.error(`Error finding service request by HIS ID: ${hisServiceReqId}`, error);
@@ -71,7 +71,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findAndCount({
                 where: { isActiveFlag: 1, deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
                 take: limit,
                 skip: offset,
                 order: { createdAt: 'DESC' },
@@ -86,7 +86,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findAndCount({
                 where: { deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
                 take: limit,
                 skip: offset,
                 order: { createdAt: 'DESC' },
@@ -126,7 +126,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findAndCount({
                 where: { patientId, deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
                 take: limit,
                 skip: offset,
                 order: { createdAt: 'DESC' },
@@ -141,7 +141,7 @@ export class ServiceRequestRepository implements IServiceRequestRepository {
         try {
             return await this.serviceRequestRepository.findAndCount({
                 where: { treatmentId, deletedAt: IsNull() },
-                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests'],
+                relations: ['serviceRequestItems', 'serviceRequestItems.serviceRequestItemTests', 'serviceRequestItems.lisService'],
                 take: limit,
                 skip: offset,
                 order: { createdAt: 'DESC' },

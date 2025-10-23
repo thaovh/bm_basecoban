@@ -203,6 +203,11 @@ export class CheckInTrackingDto {
     @IsString()
     sampleCode?: string;
 
+    @ApiProperty({ description: 'In Tracking Time', example: '2024-01-15T10:30:00Z', required: false })
+    @IsOptional()
+    @IsDateString()
+    inTrackingTime?: string;
+
     @ApiProperty({ description: 'Note', example: 'Started processing', required: false })
     @IsOptional()
     @IsString()

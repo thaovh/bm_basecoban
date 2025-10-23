@@ -23,7 +23,7 @@ export class SaveToLisHandler implements ICommandHandler<SaveToLisCommand> {
     async execute(command: SaveToLisCommand): Promise<SaveToLisResult> {
         this.logger.log(`Executing SaveToLisCommand for service request: ${command.saveToLisDto.serviceReqCode}`);
 
-        const { serviceReqCode, roomId, statusId, inRoomId, sampleTypeId, sampleCode, note } = command.saveToLisDto;
+        const { serviceReqCode, roomId, statusId, inRoomId, sampleTypeId, sampleCode, note, inTrackingTime } = command.saveToLisDto;
 
         try {
             // Step 1: Get data from HIS
@@ -47,7 +47,8 @@ export class SaveToLisHandler implements ICommandHandler<SaveToLisCommand> {
                 inRoomId,
                 sampleTypeId,
                 sampleCode,
-                note
+                note,
+                inTrackingTime
             });
 
             // Prepare nested response
@@ -332,7 +333,8 @@ export class SaveToLisHandler implements ICommandHandler<SaveToLisCommand> {
                 inRoomId: trackingData.inRoomId,
                 sampleTypeId: trackingData.sampleTypeId,
                 sampleCode: trackingData.sampleCode,
-                note: trackingData.note || `Bắt đầu xử lý mẫu xét nghiệm ${serviceRequestId}`
+                note: trackingData.note || `Bắt đầu xử lý mẫu xét nghiệm ${serviceRequestId}`,
+                inTrackingTime: trackingData.inTrackingTime ? trackingData.inTrackingTime.toISOString() : new Date().toISOString()
             };
 
             return await this.commandBus.execute(new CheckInTrackingCommand(checkInTrackingDto));

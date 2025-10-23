@@ -36,6 +36,10 @@ export class SaveToLisDto {
     @IsOptional()
     @IsString()
     note?: string;
+
+    @ApiProperty({ description: 'Start tracking time', example: '2024-01-15T10:30:00Z', required: false })
+    @IsOptional()
+    inTrackingTime?: Date;
 }
 
 export class SaveToLisResult {
