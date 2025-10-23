@@ -35,6 +35,15 @@ export class UpdateResultTrackingHandler implements ICommandHandler<UpdateResult
             if (command.updateResultTrackingDto.roomId !== undefined) {
                 updateData.roomId = command.updateResultTrackingDto.roomId;
             }
+            if (command.updateResultTrackingDto.inRoomId !== undefined) {
+                updateData.inRoomId = command.updateResultTrackingDto.inRoomId;
+            }
+            if (command.updateResultTrackingDto.sampleTypeId !== undefined) {
+                updateData.sampleTypeId = command.updateResultTrackingDto.sampleTypeId;
+            }
+            if (command.updateResultTrackingDto.sampleCode !== undefined) {
+                updateData.sampleCode = command.updateResultTrackingDto.sampleCode;
+            }
             if (command.updateResultTrackingDto.note !== undefined) {
                 updateData.note = command.updateResultTrackingDto.note;
             }

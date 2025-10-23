@@ -17,7 +17,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
         try {
             return await this.resultTrackingRepository.findOne({
                 where: { id, deletedAt: IsNull() },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
             });
         } catch (error) {
             this.logger.error(`Error finding ResultTracking by ID ${id}: ${error instanceof Error ? error.message : String(error)}`);
@@ -29,7 +29,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
         try {
             return await this.resultTrackingRepository.find({
                 where: { serviceRequestId, deletedAt: IsNull() },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 order: { inTrackingTime: 'DESC' },
             });
         } catch (error) {
@@ -42,7 +42,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
         try {
             return await this.resultTrackingRepository.find({
                 where: { resultStatusId, deletedAt: IsNull() },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 order: { inTrackingTime: 'DESC' },
             });
         } catch (error) {
@@ -55,11 +55,24 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
         try {
             return await this.resultTrackingRepository.find({
                 where: { roomId, deletedAt: IsNull() },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 order: { inTrackingTime: 'DESC' },
             });
         } catch (error) {
-            this.logger.error(`Error finding ResultTrackings by Room ID ${roomId}: ${error instanceof Error ? error.message : String(error)}`);
+            this.logger.error(`Error finding ResultTrackings by Request Room ID ${roomId}: ${error instanceof Error ? error.message : String(error)}`);
+            throw error;
+        }
+    }
+
+    async findByInRoomId(inRoomId: string): Promise<ResultTracking[]> {
+        try {
+            return await this.resultTrackingRepository.find({
+                where: { inRoomId, deletedAt: IsNull() },
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
+                order: { inTrackingTime: 'DESC' },
+            });
+        } catch (error) {
+            this.logger.error(`Error finding ResultTrackings by In Room ID ${inRoomId}: ${error instanceof Error ? error.message : String(error)}`);
             throw error;
         }
     }
@@ -73,7 +86,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
                     inTrackingTime: MoreThan(new Date(0)),
                     outTrackingTime: IsNull(),
                 },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 order: { inTrackingTime: 'ASC' },
             });
         } catch (error) {
@@ -91,7 +104,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
                     inTrackingTime: MoreThan(new Date(0)),
                     outTrackingTime: IsNull(),
                 },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 order: { inTrackingTime: 'DESC' },
             });
         } catch (error) {
@@ -104,7 +117,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
         try {
             return await this.resultTrackingRepository.findAndCount({
                 where: { deletedAt: IsNull() },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 take: limit,
                 skip: offset,
                 order: { inTrackingTime: 'DESC' },
@@ -186,7 +199,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
                     deletedAt: IsNull(),
                     inTrackingTime: Between(startDate, endDate),
                 },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 take: limit,
                 skip: offset,
                 order: { inTrackingTime: 'DESC' },
@@ -207,7 +220,7 @@ export class ResultTrackingRepository implements IResultTrackingRepository {
                     inTrackingTime: LessThan(oneHourAgo),
                     outTrackingTime: IsNull(),
                 },
-                relations: ['serviceRequest', 'resultStatus', 'room'],
+                relations: ['serviceRequest', 'resultStatus', 'room', 'inRoom', 'sampleType'],
                 take: limit,
                 skip: offset,
                 order: { inTrackingTime: 'ASC' },

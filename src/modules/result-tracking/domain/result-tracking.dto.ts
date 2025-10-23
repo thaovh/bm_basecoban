@@ -12,10 +12,25 @@ export class CreateResultTrackingDto {
     @IsNotEmpty()
     resultStatusId: string;
 
-    @ApiProperty({ description: 'Room ID', example: 'uuid-room-id', required: false })
+    @ApiProperty({ description: 'Request Room ID', example: 'uuid-room-id', required: false })
     @IsOptional()
     @IsUUID()
     roomId?: string;
+
+    @ApiProperty({ description: 'In Room ID', example: 'uuid-in-room-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    inRoomId?: string;
+
+    @ApiProperty({ description: 'Sample Type ID', example: 'uuid-sample-type-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    sampleTypeId?: string;
+
+    @ApiProperty({ description: 'Sample Code', example: 'BLD-2024-001', required: false })
+    @IsOptional()
+    @IsString()
+    sampleCode?: string;
 
     @ApiProperty({ description: 'In Tracking Time', example: '2024-01-15T10:30:00Z', required: false })
     @IsOptional()
@@ -44,10 +59,25 @@ export class UpdateResultTrackingDto {
     @IsUUID()
     resultStatusId?: string;
 
-    @ApiProperty({ description: 'Room ID', example: 'uuid-room-id', required: false })
+    @ApiProperty({ description: 'Request Room ID', example: 'uuid-room-id', required: false })
     @IsOptional()
     @IsUUID()
     roomId?: string;
+
+    @ApiProperty({ description: 'In Room ID', example: 'uuid-in-room-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    inRoomId?: string;
+
+    @ApiProperty({ description: 'Sample Type ID', example: 'uuid-sample-type-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    sampleTypeId?: string;
+
+    @ApiProperty({ description: 'Sample Code', example: 'BLD-2024-001', required: false })
+    @IsOptional()
+    @IsString()
+    sampleCode?: string;
 
     @ApiProperty({ description: 'In Tracking Time', example: '2024-01-15T10:30:00Z', required: false })
     @IsOptional()
@@ -84,10 +114,25 @@ export class GetResultTrackingsDto {
     @IsUUID()
     resultStatusId?: string;
 
-    @ApiProperty({ description: 'Room ID filter', example: 'uuid-room-id', required: false })
+    @ApiProperty({ description: 'Request Room ID filter (phòng yêu cầu)', example: 'uuid-request-room-id', required: false })
     @IsOptional()
     @IsUUID()
-    roomId?: string;
+    requestRoomId?: string;
+
+    @ApiProperty({ description: 'In Room ID filter (phòng đang xử lý)', example: 'uuid-in-room-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    inRoomId?: string;
+
+    @ApiProperty({ description: 'Sample Type ID filter', example: 'uuid-sample-type-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    sampleTypeId?: string;
+
+    @ApiProperty({ description: 'Sample Code filter', example: 'BLD-2024-001', required: false })
+    @IsOptional()
+    @IsString()
+    sampleCode?: string;
 
     @ApiProperty({ description: 'Search term', example: 'pending', required: false })
     @IsOptional()
@@ -138,10 +183,25 @@ export class CheckInTrackingDto {
     @IsNotEmpty()
     resultStatusId: string;
 
-    @ApiProperty({ description: 'Room ID', example: 'uuid-room-id', required: false })
+    @ApiProperty({ description: 'Request Room ID', example: 'uuid-room-id', required: false })
     @IsOptional()
     @IsUUID()
     roomId?: string;
+
+    @ApiProperty({ description: 'In Room ID', example: 'uuid-in-room-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    inRoomId?: string;
+
+    @ApiProperty({ description: 'Sample Type ID', example: 'uuid-sample-type-id', required: false })
+    @IsOptional()
+    @IsUUID()
+    sampleTypeId?: string;
+
+    @ApiProperty({ description: 'Sample Code', example: 'BLD-2024-001', required: false })
+    @IsOptional()
+    @IsString()
+    sampleCode?: string;
 
     @ApiProperty({ description: 'Note', example: 'Started processing', required: false })
     @IsOptional()

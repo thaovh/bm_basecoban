@@ -10,7 +10,7 @@ export class SaveToLisHandler implements ICommandHandler<SaveToLisCommand> {
     async execute(command: SaveToLisCommand): Promise<SaveToLisResult> {
         this.logger.log(`Executing SaveToLisCommand for service request: ${command.saveToLisDto.serviceReqCode}`);
 
-        const { serviceReqCode, roomId, statusId, note } = command.saveToLisDto;
+        const { serviceReqCode, roomId, statusId, inRoomId, sampleTypeId, sampleCode, note } = command.saveToLisDto;
 
         // For now, return a simple response indicating the endpoint is ready
         // TODO: Implement the full workflow with:
@@ -30,6 +30,9 @@ export class SaveToLisHandler implements ICommandHandler<SaveToLisCommand> {
                 inTrackingTime: new Date(),
                 resultStatusId: statusId,
                 roomId: roomId,
+                inRoomId: inRoomId,
+                sampleTypeId: sampleTypeId,
+                sampleCode: sampleCode,
                 note: note || `Bắt đầu xử lý mẫu xét nghiệm ${serviceReqCode}`
             },
             message: `Save to LIS endpoint is ready. Service request ${serviceReqCode} will be processed with room ${roomId} and status ${statusId}`

@@ -33,7 +33,10 @@ export class CheckInTrackingHandler implements ICommandHandler<CheckInTrackingCo
             resultTracking.id = uuidv4();
             resultTracking.serviceRequestId = command.checkInTrackingDto.serviceRequestId;
             resultTracking.resultStatusId = command.checkInTrackingDto.resultStatusId;
-            resultTracking.roomId = command.checkInTrackingDto.roomId;
+            resultTracking.roomId = command.checkInTrackingDto.roomId; // This maps to REQUEST_ROOM_ID in database
+            resultTracking.inRoomId = command.checkInTrackingDto.inRoomId;
+            resultTracking.sampleTypeId = command.checkInTrackingDto.sampleTypeId;
+            resultTracking.sampleCode = command.checkInTrackingDto.sampleCode;
             resultTracking.note = command.checkInTrackingDto.note;
             resultTracking.inTrackingTime = new Date(); // Set current time for check-in
 

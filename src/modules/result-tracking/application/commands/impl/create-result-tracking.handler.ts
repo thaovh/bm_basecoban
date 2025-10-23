@@ -34,6 +34,9 @@ export class CreateResultTrackingHandler implements ICommandHandler<CreateResult
             resultTracking.serviceRequestId = command.createResultTrackingDto.serviceRequestId;
             resultTracking.resultStatusId = command.createResultTrackingDto.resultStatusId;
             resultTracking.roomId = command.createResultTrackingDto.roomId;
+            resultTracking.inRoomId = command.createResultTrackingDto.inRoomId;
+            resultTracking.sampleTypeId = command.createResultTrackingDto.sampleTypeId;
+            resultTracking.sampleCode = command.createResultTrackingDto.sampleCode;
             resultTracking.note = command.createResultTrackingDto.note;
 
             // Set in tracking time if provided, otherwise set to current time

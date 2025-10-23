@@ -31,7 +31,10 @@ export class GetResultTrackingsHandler implements IQueryHandler<GetResultTrackin
                 search,
                 serviceRequestId,
                 resultStatusId,
-                roomId,
+                requestRoomId,
+                inRoomId,
+                sampleTypeId,
+                sampleCode,
                 startDate,
                 endDate,
                 isActive,
@@ -65,13 +68,18 @@ export class GetResultTrackingsHandler implements IQueryHandler<GetResultTrackin
                 resultTrackings = await this.resultTrackingRepository.findByResultStatusId(resultStatusId);
                 total = resultTrackings.length;
                 resultTrackings = resultTrackings.slice(offset, offset + limit);
-            } else if (roomId) {
-                // Filter by room
+            } else if (requestRoomId) {
+                // Filter by request room
                 if (isActive) {
-                    resultTrackings = await this.resultTrackingRepository.findActiveInRoom(roomId);
+                    resultTrackings = await this.resultTrackingRepository.findActiveInRoom(requestRoomId);
                 } else {
-                    resultTrackings = await this.resultTrackingRepository.findByRoomId(roomId);
+                    resultTrackings = await this.resultTrackingRepository.findByRoomId(requestRoomId);
                 }
+                total = resultTrackings.length;
+                resultTrackings = resultTrackings.slice(offset, offset + limit);
+            } else if (inRoomId) {
+                // Filter by in room
+                resultTrackings = await this.resultTrackingRepository.findByInRoomId(inRoomId);
                 total = resultTrackings.length;
                 resultTrackings = resultTrackings.slice(offset, offset + limit);
             } else {

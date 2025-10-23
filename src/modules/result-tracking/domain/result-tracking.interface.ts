@@ -4,7 +4,8 @@ export interface IResultTrackingRepository {
     findById(id: string): Promise<ResultTracking | null>;
     findByServiceRequestId(serviceRequestId: string): Promise<ResultTracking[]>;
     findByResultStatusId(resultStatusId: string): Promise<ResultTracking[]>;
-    findByRoomId(roomId: string): Promise<ResultTracking[]>;
+    findByRoomId(roomId: string): Promise<ResultTracking[]>; // Request Room
+    findByInRoomId(inRoomId: string): Promise<ResultTracking[]>; // In Room
     findActiveInRoom(roomId: string): Promise<ResultTracking[]>;
     findCurrentTrackingByServiceRequest(serviceRequestId: string): Promise<ResultTracking | null>;
     findAll(limit?: number, offset?: number): Promise<[ResultTracking[], number]>;
