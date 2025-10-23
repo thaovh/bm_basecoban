@@ -48,17 +48,187 @@ export class SaveToLisResult {
     @ApiProperty({ description: 'Service Request Code' })
     serviceReqCode: string;
 
-    @ApiProperty({ description: 'Patient information' })
-    patient: any;
+    @ApiProperty({ description: 'Full nested service request data' })
+    serviceRequest: {
+        id: string;
+        hisServiceReqId: number;
+        serviceReqCode: string;
+        serviceReqSttId: number;
+        serviceReqSttCode: string;
+        serviceReqTypeId: number;
+        serviceReqTypeCode: string;
+        instructionTime: Date;
+        instructionDate: Date;
+        icdCode?: string;
+        icdName?: string;
+        treatmentId?: number;
+        treatmentCode?: string;
+        totalAmount: number;
+        status: string;
+        isActive: boolean;
+        createdAt: Date;
 
-    @ApiProperty({ description: 'Services information' })
-    services: any[];
+        patient: {
+            id: number;
+            code: string;
+            name: string;
+            dob: number;
+            cmndNumber?: string;
+            cmndDate?: number;
+            cmndPlace?: string;
+            mobile?: string;
+            phone?: string;
+            provinceId?: string;
+            provinceCode?: string;
+            provinceName?: string;
+            wardId?: string;
+            communeCode?: string;
+            communeName?: string;
+            address: string;
+            genderId: number;
+            genderName: string;
+            careerName?: string;
+            lisPatientId?: string;
+        };
 
-    @ApiProperty({ description: 'Total amount' })
-    totalAmount: number;
+        requestRoom?: {
+            id: string;
+            roomName: string;
+            roomCode: string;
+        };
 
-    @ApiProperty({ description: 'Tracking information' })
-    tracking: any;
+        requestDepartment?: {
+            id: number;
+            code: string;
+            name: string;
+        };
+
+        executeRoom?: {
+            id: number;
+            roomName: string;
+            roomCode: string;
+        };
+
+        executeDepartment?: {
+            id: number;
+            code: string;
+            name: string;
+        };
+
+        serviceRequestItems: Array<{
+            id: string;
+            hisSereServId: number;
+            hisServiceId: number;
+            hisServiceCode: string;
+            hisServiceName: string;
+            hisPrice: number;
+            quantity: number;
+            unitPrice: number;
+            totalPrice: number;
+            status: string;
+            itemOrder: number;
+            isActive: boolean;
+
+            lisService?: {
+                id: string;
+                serviceCode: string;
+                serviceName: string;
+                shortName: string;
+                currentPrice: number;
+                serviceGroup: {
+                    id: string;
+                    serviceGroupName: string;
+                };
+                unitOfMeasure: {
+                    id: string;
+                    unitOfMeasureName: string;
+                };
+                serviceTests: Array<{
+                    id: string;
+                    testCode: string;
+                    testName: string;
+                    shortName: string;
+                    rangeText?: string;
+                    rangeLow?: number;
+                    rangeHigh?: number;
+                    mapping?: string;
+                    testOrder: number;
+                    isActiveFlag: number;
+                    testStatus?: string;
+                    expectedResult?: string;
+                    actualResult?: string;
+                    resultUnit?: string;
+                    normalRange?: string;
+                    criticalValues?: any;
+                    testMethod?: string;
+                    specimenType?: string;
+                    processingTime?: string;
+                    unitOfMeasure: {
+                        id: string;
+                        unitOfMeasureName: string;
+                    };
+                }>;
+            };
+        }>;
+
+        resultTracking?: {
+            id: string;
+            inTrackingTime?: Date;
+            outTrackingTime?: Date;
+            note?: string;
+            resultStatus?: {
+                id: string;
+                statusCode: string;
+                statusName: string;
+                orderNumber: number;
+            };
+            requestRoom?: {
+                id: string;
+                roomName: string;
+                roomCode: string;
+            };
+            inRoom?: {
+                id: string;
+                roomName: string;
+                roomCode: string;
+            };
+            sample?: {
+                sampleType?: {
+                    id: string;
+                    typeCode: string;
+                    typeName: string;
+                    shortName?: string;
+                };
+                sampleCode?: string;
+                sampleStatus?: string;
+            };
+            workflow?: {
+                currentStep: string;
+                nextStep: string;
+                estimatedCompletionTime?: Date;
+                priority: string;
+                assignedTo?: {
+                    userId: string;
+                    userName: string;
+                    role: string;
+                };
+            };
+            timeline?: {
+                createdAt: Date;
+                estimatedProcessingTime: string;
+                estimatedCompletionTime?: Date;
+                lastUpdatedAt: Date;
+            };
+            businessRules?: {
+                canModify: boolean;
+                canCancel: boolean;
+                canReassign: boolean;
+                requiresApproval: boolean;
+                autoProcessing: boolean;
+                notificationsSent: string[];
+            };
+        };
+    };
 
     @ApiProperty({ description: 'Success message' })
     message: string;

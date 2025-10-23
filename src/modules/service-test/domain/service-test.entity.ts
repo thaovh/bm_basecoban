@@ -39,6 +39,34 @@ export class ServiceTest extends BaseEntity {
     @Column({ name: 'IS_ACTIVE_FLAG', type: 'number', default: 1 })
     isActiveFlag: number;
 
+    // Test Status and Results
+    @Column({ name: 'TEST_STATUS', type: 'varchar2', length: 20, default: 'PENDING' })
+    testStatus?: string;
+
+    @Column({ name: 'EXPECTED_RESULT', type: 'varchar2', length: 200, nullable: true })
+    expectedResult?: string;
+
+    @Column({ name: 'ACTUAL_RESULT', type: 'varchar2', length: 200, nullable: true })
+    actualResult?: string;
+
+    @Column({ name: 'RESULT_UNIT', type: 'varchar2', length: 50, nullable: true })
+    resultUnit?: string;
+
+    @Column({ name: 'NORMAL_RANGE', type: 'varchar2', length: 100, nullable: true })
+    normalRange?: string;
+
+    @Column({ name: 'CRITICAL_VALUES', type: 'clob', nullable: true })
+    criticalValues?: string;
+
+    @Column({ name: 'TEST_METHOD', type: 'varchar2', length: 100, nullable: true })
+    testMethod?: string;
+
+    @Column({ name: 'SPECIMEN_TYPE', type: 'varchar2', length: 100, nullable: true })
+    specimenType?: string;
+
+    @Column({ name: 'PROCESSING_TIME', type: 'varchar2', length: 50, nullable: true })
+    processingTime?: string;
+
     // Relationships
     @ManyToOne(() => Service)
     @JoinColumn({ name: 'SERVICE_ID' })

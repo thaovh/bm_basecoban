@@ -15,6 +15,8 @@ import { ServiceGroupModule } from '../service-group/service-group.module';
 import { UnitOfMeasureModule } from '../unit-of-measure/unit-of-measure.module';
 import { ServiceTestModule } from '../service-test/service-test.module';
 import { HisIntegrationModule } from '../his-integration/his-integration.module';
+import { HisServiceRequestModule } from '../his-service-request/his-service-request.module';
+import { ResultTrackingModule } from '../result-tracking/result-tracking.module';
 
 // Commands
 import { CreateServiceRequestHandler } from './application/commands/impl/create-service-request.handler';
@@ -35,6 +37,7 @@ import { GetServiceRequestsHandler } from './application/queries/impl/get-servic
 import { SearchServiceRequestsHandler } from './application/queries/impl/search-service-requests.handler';
 import { GetServiceRequestsByPatientHandler } from './application/queries/impl/get-service-requests-by-patient.handler';
 import { GetServiceRequestsByTreatmentHandler } from './application/queries/impl/get-service-requests-by-treatment.handler';
+import { GetHisServiceRequestHandler } from './application/queries/impl/get-his-service-request.handler';
 
 @Module({
     imports: [
@@ -45,6 +48,8 @@ import { GetServiceRequestsByTreatmentHandler } from './application/queries/impl
         UnitOfMeasureModule,
         ServiceTestModule,
         HisIntegrationModule, // For DualAuthGuard dependency
+        HisServiceRequestModule, // For HIS service request queries
+        ResultTrackingModule, // For result tracking commands
     ],
     controllers: [ServiceRequestController],
     providers: [
@@ -55,6 +60,10 @@ import { GetServiceRequestsByTreatmentHandler } from './application/queries/impl
         {
             provide: 'IServiceRequestItemRepository',
             useClass: ServiceRequestItemRepository,
+        },
+        {
+            provide: 'IServiceRequestSaveService',
+            useClass: ServiceRequestSaveService,
         },
         ServiceRequestRepository,
         ServiceRequestItemRepository,
@@ -77,6 +86,7 @@ import { GetServiceRequestsByTreatmentHandler } from './application/queries/impl
         SearchServiceRequestsHandler,
         GetServiceRequestsByPatientHandler,
         GetServiceRequestsByTreatmentHandler,
+        GetHisServiceRequestHandler,
     ],
     exports: ['IServiceRequestRepository', 'IServiceRequestItemRepository'],
 })

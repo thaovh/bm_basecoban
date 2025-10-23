@@ -3,6 +3,7 @@ import { Logger, Inject } from '@nestjs/common';
 import { GetServiceRequestQuery } from '../get-service-request.query';
 import { IHisServiceRequestRepository, HisServiceRequestResponse } from '../../../domain/his-service-request.interface';
 import { AppError, HTTP_CLIENT_ERROR, HTTP_SERVER_ERROR } from '../../../../../common/dtos/base-response.dto';
+import { ResultTrackingService } from '../../services/result-tracking.service';
 
 @QueryHandler(GetServiceRequestQuery)
 export class GetServiceRequestHandler implements IQueryHandler<GetServiceRequestQuery> {
@@ -11,6 +12,7 @@ export class GetServiceRequestHandler implements IQueryHandler<GetServiceRequest
   constructor(
     @Inject('IHisServiceRequestRepository')
     private readonly hisServiceRequestRepository: IHisServiceRequestRepository,
+    private readonly resultTrackingService: ResultTrackingService,
   ) {}
 
   async execute(query: GetServiceRequestQuery): Promise<HisServiceRequestResponse> {
@@ -31,7 +33,26 @@ export class GetServiceRequestHandler implements IQueryHandler<GetServiceRequest
 
       this.logger.log(`Service request found: ${serviceRequest.serviceReqCode} with ${serviceRequest.services.length} services`);
 
-      return { serviceRequest };
+      // Try to get result tracking for this service request
+      let resultTracking = null;
+      try {
+        // For now, we'll use the service request ID as the LIS service request ID
+        // In a real implementation, you'd need to map HIS service request to LIS service request
+        resultTracking = await this.resultTrackingService.getResultTrackingByServiceRequestId(serviceRequest.id);
+        if (resultTracking) {
+          this.logger.log(`Found result tracking for service request: ${serviceRequest.serviceReqCode}`);
+        }
+      } catch (error) {
+        this.logger.warn('Failed to get result tracking', { 
+          serviceReqCode, 
+          error: error instanceof Error ? error.message : String(error) 
+        });
+      }
+
+      return { 
+        serviceRequest,
+        resultTracking 
+      };
     } catch (error) {
       this.logger.error('Failed to get service request', {
         serviceReqCode,

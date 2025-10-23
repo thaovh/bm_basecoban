@@ -1,6 +1,65 @@
 // HIS Service Request Response Interfaces
 export interface HisServiceRequestResponse {
   serviceRequest: ServiceRequestInfo;
+  resultTracking?: ResultTrackingInfo;
+}
+
+export interface ResultTrackingInfo {
+  id: string;
+  inTrackingTime?: Date;
+  outTrackingTime?: Date;
+  note?: string;
+  resultStatus?: {
+    id: string;
+    statusCode: string;
+    statusName: string;
+    orderNumber: number;
+  };
+  requestRoom?: {
+    id: string;
+    roomName: string;
+    roomCode: string;
+  };
+  inRoom?: {
+    id: string;
+    roomName: string;
+    roomCode: string;
+  };
+  sample?: {
+    sampleType?: {
+      id: string;
+      typeCode: string;
+      typeName: string;
+      shortName?: string;
+    };
+    sampleCode?: string;
+    sampleStatus?: string;
+  };
+  workflow?: {
+    currentStep: string;
+    nextStep: string;
+    estimatedCompletionTime?: Date;
+    priority: string;
+    assignedTo?: {
+      userId: string;
+      userName: string;
+      role: string;
+    };
+  };
+  timeline?: {
+    createdAt: Date;
+    estimatedProcessingTime: string;
+    estimatedCompletionTime?: Date;
+    lastUpdatedAt: Date;
+  };
+  businessRules?: {
+    canModify: boolean;
+    canCancel: boolean;
+    canReassign: boolean;
+    requiresApproval: boolean;
+    autoProcessing: boolean;
+    notificationsSent: string[];
+  };
 }
 
 export interface ServiceRequestInfo {

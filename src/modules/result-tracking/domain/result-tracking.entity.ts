@@ -53,6 +53,31 @@ export class ResultTracking extends BaseEntity {
     @ApiProperty({ description: 'Note', example: 'Sample processed successfully', required: false })
     note?: string;
 
+    // Workflow and Business Rules
+    @Column({ name: 'WORKFLOW', type: 'clob', nullable: true })
+    @ApiProperty({ description: 'Workflow information in JSON format', required: false })
+    workflow?: string;
+
+    @Column({ name: 'TIMELINE', type: 'clob', nullable: true })
+    @ApiProperty({ description: 'Timeline information in JSON format', required: false })
+    timeline?: string;
+
+    @Column({ name: 'BUSINESS_RULES', type: 'clob', nullable: true })
+    @ApiProperty({ description: 'Business rules in JSON format', required: false })
+    businessRules?: string;
+
+    @Column({ name: 'ASSIGNED_TO', type: 'varchar2', length: 36, nullable: true })
+    @ApiProperty({ description: 'User ID assigned to this tracking', required: false })
+    assignedTo?: string;
+
+    @Column({ name: 'PRIORITY', type: 'varchar2', length: 20, default: 'NORMAL' })
+    @ApiProperty({ description: 'Priority level', example: 'NORMAL', required: false })
+    priority?: string;
+
+    @Column({ name: 'ESTIMATED_COMPLETION_TIME', type: 'timestamp', nullable: true })
+    @ApiProperty({ description: 'Estimated completion time', required: false })
+    estimatedCompletionTime?: Date;
+
     // Relationships
     @ManyToOne(() => ServiceRequest, { eager: false })
     @JoinColumn({ name: 'SERVICE_REQUEST_ID' })
